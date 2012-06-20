@@ -57,7 +57,20 @@ class Seed_channel_model extends Seed_model {
 	}
 
 
-	// --------------------------------------------------------------
+	// --------------------------------------------------------------------
+
+	/**
+	 * Takes a direct form submission, validates it, then runs
+	 *
+	 * @access      public
+	 * @return      void
+	 */
+	public function seed()
+	{
+		die('TODO!');
+	}
+
+
 
 } // End class
 
