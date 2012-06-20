@@ -67,7 +67,7 @@ class Seed_upd {
 		// Install tables
 		// --------------------------------------
 
-		$this->EE->seed_example_model->install();
+		//$this->EE->seed_example_model->install();
 		// TODO add extra model install method calls
 
 
@@ -114,7 +114,7 @@ class Seed_upd {
 		// Uninstall tables
 		// --------------------------------------
 
-		$this->EE->seed_example_model->uninstall();
+		//$this->EE->seed_example_model->uninstall();
 		// TODO add extra calls to other model's uninstalls
 
 		return TRUE;

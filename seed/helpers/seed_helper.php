@@ -68,6 +68,25 @@ if ( ! function_exists('dumper'))
 	}
 }
 
+
+/**
+ * Zebra table helper
+ *
+ * @param       bool
+ * @return      string
+ */
+if ( ! function_exists('seed_row'))
+{
+	function seed_row($reset = FALSE)
+	{
+		static $i = 0;
+
+		if ($reset) $i = 0;
+
+		return (++$i % 2 ? 'odd' : 'even');
+	}
+}
+
 // --------------------------------------------------------------
 
 /* End of file Seed_helper.php */

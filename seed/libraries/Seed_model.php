@@ -82,7 +82,7 @@ class Seed_model extends CI_Model {
 	{
 		$EE =& get_instance();
 
-		$EE->load->model("seed_example_model");
+		$EE->load->model("seed_channel_model");
 	}
 
 	// --------------------------------------------------------------------
