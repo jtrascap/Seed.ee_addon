@@ -18,9 +18,8 @@ if ( ! defined('SEED_NAME'))
 	define('SEED_DEBUG',        TRUE);
 	define('SEED_CACHE_TIME',    900);
 
-	define('SEED_PREFERENCES', 'pref_one|pref_two' );
-
-
+	define('SEED_FIELD_PLUGIN_PATH', dirname(__FILE__).'/fieldtypes/');
+	define('SEED_TEXT_SRC', dirname(__FILE__).'/seed/english/seed.kant.txt');
 }
 
 $config['name']    = SEED_NAME;

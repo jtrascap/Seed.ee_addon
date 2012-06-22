@@ -83,6 +83,7 @@ class Seed_model extends CI_Model {
 		$EE =& get_instance();
 
 		$EE->load->model("seed_channel_model");
+		$EE->load->model("seed_generator_model");
 	}
 
 	// --------------------------------------------------------------------
@@ -401,6 +402,63 @@ class Seed_model extends CI_Model {
 	}
 
 	// --------------------------------------------------------------------
+
+	public function get_plugins( $plugin_list )
+	{
+		$this->EE->load->helper(array('file'));
+		
+		$plugins = array();
+		
+		require_once SEED_FIELD_PLUGIN_PATH . 'seed.fieldtype.php';
+	
+		//$paths[] = SEED_FIELD_PLUGIN_PATH;
+
+		foreach( $plugin_list as $type ) 
+		{
+			$paths[] = SEED_FIELD_PLUGIN_PATH . '/' . $type;
+		}
+
+		$found_plugins = array();
+
+		foreach ($paths as $i => $path)
+		{
+			if ( ! is_dir($path))
+			{
+				continue;
+			}
+			
+			foreach (get_filenames($path, TRUE) as $file)
+			{
+				$class = basename($file, EXT);
+
+				if (strpos($class, 'seed.') !== 0 || strpos($class, '~') !== FALSE)
+				{
+					continue;
+				}
+
+				$class = substr( $class, 5 );
+				
+				$plugin = $this->create_child( $class );
+
+				$plugins[ $class] = get_object_vars($plugin);
+			}
+		}
+		
+		return $plugins;
+	}
+
+	public static function create_child($path)
+	{
+		$class = 'Seed_fieldtype_' . $path;
+
+		require_once SEED_FIELD_PLUGIN_PATH . $path . '/seed.'. $path . EXT;
+
+		$child = new $class;
+				
+		$child->initialize();
+		
+		return $child;
+	}
 
 }
 // End of file Seed_model.php
