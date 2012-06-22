@@ -36,22 +36,7 @@ class Seed_mcp
 	}
 	// --------------------------------------------------------------------
 
-	/**
-	 * Module Home page
-	 *
-	 * @access      public
-	 * @return      string
-	 */
-
-	function index()
-	{	
-		$this->EE->cp->set_variable('cp_page_title', lang('seed_module_name'));
-
-		$this->data['new_seed_url'] = $this->base . '&method=seed';
-
-		return $this->EE->load->view('mcp_index', $this->data, TRUE);
 	
-	}
 	// --------------------------------------------------------------------
 
 	/**
@@ -61,7 +46,7 @@ class Seed_mcp
 	 * @return      string
 	 */
 
-	function seed( $errors = array() )
+	function index( $type = 'new', $message = array() )
 	{	
 
 		// --------------------------------------
@@ -74,7 +59,7 @@ class Seed_mcp
 		// Load assets
 		// --------------------------------------
 
-		//$this->EE->cp->load_package_css('seed'.$this->nocache);
+		$this->EE->cp->load_package_css('seed'.$this->nocache);
 		$this->EE->cp->load_package_js('seed'.$this->nocache);
 
 
@@ -114,9 +99,19 @@ class Seed_mcp
 			$this->data['channels'][$row['channel_id']]['fields'][$row['field_id']] = $row;
 		}
 
-		//die('<prE>'.print_R($this->data,1));
 
-		$this->data['errors'] = $errors;
+		if( $type == 'error' )
+		{
+			$this->data['errors'] = $message;
+		}
+
+
+		if( $type == 'success' )
+		{
+			$this->data['success'] = $message;
+		}
+		
+		$this->data[ 'type' ] = $type;
 
 		return $this->EE->load->view('mcp_seed', $this->data, TRUE);
 	
@@ -147,20 +142,32 @@ class Seed_mcp
 		{
 			$errors[] = lang('seed_error_no_count');
 		}
-		if( !empty( $errors ) ) return $this->seed( $errors );
+		if( !empty( $errors ) ) 
+		{
+			return $this->index( 'error', $errors );
+		}
 
 		if( $seed_count <= 0 ) 
 		{
 			$errors[] = lang('seed_error_count_not_positive');
 		}
 
-		if( !empty( $errors ) ) return $this->seed( $errors );
-
+		if( !empty( $errors ) ) 
+		{
+			return $this->index( 'error', $errors );
+		}
 
 		// Basic checks in place. Throw this over to the seed model for the actual grunt work
 		$return = $this->EE->seed_channel_model->seed();
 
-		return;
+		if( is_array( $return ) )
+		{
+			return $this->index( 'error', $return );
+		}
+
+		$ret[] = lang('seed_success_message');
+
+		return $this->index( 'success', $ret );
 
 	}
 	// --------------------------------------------------------------------

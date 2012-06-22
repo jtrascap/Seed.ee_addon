@@ -1,26 +1,37 @@
+<div id="seed_container">
+
 <?php if ($channels): ?>
 
 <form method="post" action="<?=$base_url?>&amp;method=start_seed">
 
 	<input type="hidden" name="XID" value="<?=XID_SECURE_HASH?>" />
 
-	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-	proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+	<?php if( $type == 'error' ) : ?>
 
-	<?php if( !empty( $errors ) ) : ?>
-
-	<h3>Sorry</h3>
-	<p>There <?php if( count( $errors ) > 1 ) :?>were some errors<?php else : ?>was an error<?php endif; ?> : </p>
-	<ul>
+	<div class="seed_error">
+		<h3>There <?php if( count( $errors ) > 1 ) :?>were some errors<?php else : ?>was an error<?php endif; ?> : </h3>
+		<ul>
 		<?php foreach( $errors as $error ) : ?>
 			<li><?=$error?></li>
 		<?php endforeach; ?>
-	</ul>
+		</ul>
+	</div>
+
 	<?php endif; ?>
+
+
+	<?php if( $type == 'success' ) : ?>
+
+	<div class="seed_error">
+		<h3>Success! </h3>
+
+		<?php foreach( $success as $msg ) : ?>
+			<p><?=$msg?></p>
+		<?php endforeach; ?>
+	</div>
+
+	<?php endif; ?>
+
 
 	<table class="mainTable" id="seed-new-seed" cellspacing="0" cellpadding="0">
 		<colgroup>
@@ -113,10 +124,10 @@
 						<?php if( $field['field_type'] == 'text' ) : ?>
 
 							<p>Populate with between
-								<input style="width : 5%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="1"/> 
+								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="1"/> 
 								and
 
-								<input style="width : 5%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="10"/> 
+								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="10"/> 
 								Words
 							</p>
 							<p>Up to a max length of <strong>
@@ -128,19 +139,13 @@
 						<?php if( $field['field_type'] == 'textarea' ) : ?>
 
 							<p>Populate with between
-								<input style="width : 5%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="3"/> 
+								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="3"/> 
 								and
 
-								<input style="width : 5%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="6"/> 
+								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="6"/> 
 								Paragraphs
 							</p>
 
-							<p>Include
-							<select id="seed_ield_<?=$channel_id?>_<?=$field_id?>_markup" name="seed_field_<?=$channel_id?>_<?=$field_id?>_markup">
-								<option value="none">No Formatting</option>
-								<option value="html">HTML</option>
-								<option value="textile">Textile</option>
-								<option value="markdown">Markdown</option>
 							</select>
 						</p>
 
@@ -163,14 +168,12 @@
 	<p><input type="submit" class="submit" value="<?=lang('start_seed')?>" /></p>
 </form>
 
-
-
-
-
-
-
 <?php else : ?>
 
-	<p><?=lang('no_searchable_channels_found')?></p>
+	<p><?=lang('seed_no_channels_to_populate')?></p>
 
 <?php endif; ?>
+
+
+</div>
+

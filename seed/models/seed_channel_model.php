@@ -118,9 +118,10 @@ class Seed_channel_model extends Seed_model {
 		$seed['field_options'] = $this->field_options;
 
 		$results = $this->_generate( $seed );
-		die('<prE>'.print_R($seed,1));
 
-		die('TODO!');
+		if( !empty( $this->errors ) ) return $this->errors;
+
+		return TRUE;
 	}
 
 	private function _get_field_plugins()
@@ -255,20 +256,27 @@ class Seed_channel_model extends Seed_model {
 					$field_name = 'field_id_'.$field_id;
 				}
 
+				$dummy = '';
+
 				// Generate some text within the bounds of the options
-				$dummy = $this->_generate_filler( $field );
+				if( $field['populate'] == 'sparse' )
+				{
+					// We don't want to always populate this. 
+					if( rand( 1, 2 ) == 1 ) $dummy = $this->_generate_filler( $field );
+				}
+				else $dummy = $this->_generate_filler( $field );
 
 				$data[ $field_name ] = $dummy;
 			}
 
 			if( $this->EE->api_channel_entries->submit_new_entry( $seed['channel_id'], $data ) === FALSE )
 			{
-				$errors = $this->EE->api_channel_entries->get_errors();
-				die('<pre>'.print_R($errors,1));
+				$this->errors = $this->EE->api_channel_entries->get_errors();
+				return FALSE;
 			}
 		}
 
-		return;
+		return TRUE;
 	}
 
 	private function _generate_filler( $options = array() )
@@ -278,11 +286,9 @@ class Seed_channel_model extends Seed_model {
 
 		$length = rand( $options['from'], $options['to'] );
 
-
-
 		switch( $options['count'] ) {
 			case 'words' :
-				$ret = $this->EE->seed_generator_model->generate_words( $length );
+				$ret = $this->EE->seed_generator_model->generate_words( $options['max'], $length );
 				break;
 			case 'textarea' :
 			default :

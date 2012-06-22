@@ -1,0 +1,17 @@
+
+#seed_container .success
+{
+	padding : 10px; 
+}
+
+#seed_container .seed_error
+{
+	padding : 10px;
+	border : 1px solid #D91350; 
+	margin-bottom : 10px; 
+}
+#seed_container .seed_error li
+{	
+	margin-left : 20px;
+	list-style-type: circle;
+}
