@@ -1,5 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Seed Fieldtype Text class
+ *
+ * @package         seed_ee_addon
+ * @version         0.7.4
+ * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
+ * @link            http://squarebit.co.uk/seed
+ * @copyright       Copyright (c) 2012, Joel 
+ */
 class Seed_fieldtype_text extends Seed_fieldtype
 {
 	public $title = 'text';

@@ -1,5 +1,14 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
+/**
+ * Seed MCP File 
+ *
+ * @package         seed_ee_addon
+ * @version         0.7.4
+ * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
+ * @link            http://squarebit.co.uk/seed
+ * @copyright       Copyright (c) 2012, Joel 
+ */
 
 class Seed_mcp
 {

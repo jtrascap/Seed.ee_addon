@@ -7,7 +7,7 @@ include PATH_THIRD.'Seed/config'.EXT;
  * Seed Update Class
  *
  * @package         seed_ee_addon
- * @version         0.1
+ * @version         0.7.4
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -64,14 +64,6 @@ class Seed_upd {
 	public function install()
 	{
 		// --------------------------------------
-		// Install tables
-		// --------------------------------------
-
-		//$this->EE->seed_example_model->install();
-		// TODO add extra model install method calls
-
-
-		// --------------------------------------
 		// Add row to modules table
 		// --------------------------------------
 
@@ -110,13 +102,6 @@ class Seed_upd {
 		$this->EE->db->where('module_name', SEED_CLASS_NAME);
 		$this->EE->db->delete('modules');
 
-		// --------------------------------------
-		// Uninstall tables
-		// --------------------------------------
-
-		//$this->EE->seed_example_model->uninstall();
-		// TODO add extra calls to other model's uninstalls
-
 		return TRUE;
 	}
 
@@ -137,13 +122,6 @@ class Seed_upd {
 		{
 			return FALSE;
 		}
-
-		// TODO flesh out upgrade if needed
-
-		// if (version_compare($current, 'new-version', '<'))
-		// {
-		// 	// update to new version
-		// }
 
 		// Returning TRUE updates db version number
 		return TRUE;

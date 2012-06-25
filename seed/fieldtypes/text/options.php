@@ -32,7 +32,7 @@
 	</th>
 	<td>
 		<label>
-			<input style="width : 30%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="1"/>
+			<input style="width : 30%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="3"/>
 			Words
 		</label>
 	</td>
@@ -45,7 +45,7 @@
 	</th>
 	<td>
 		<label>
-			<input style="width:30%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="10"/>
+			<input style="width:30%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="6"/>
 			Words
 		</label>
 	</td>

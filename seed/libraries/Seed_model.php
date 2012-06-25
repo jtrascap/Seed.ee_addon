@@ -6,6 +6,15 @@ if ( ! class_exists('CI_model'))
 	load_class('Model', 'core');
 }
 
+/**
+ * Seed Base Model class
+ *
+ * @package         seed_ee_addon
+ * @version         0.7.4
+ * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
+ * @link            http://squarebit.co.uk/seed
+ * @copyright       Copyright (c) 2012, Joel 
+ */
 class Seed_model extends CI_Model {
 
 	// --------------------------------------------------------------------

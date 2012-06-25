@@ -1,5 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Seed Abstract Field class
+ *
+ * @package         seed_ee_addon
+ * @version         0.7.4
+ * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
+ * @link            http://squarebit.co.uk/seed
+ * @copyright       Copyright (c) 2012, Joel 
+ */
 abstract class Seed_fieldtype extends Seed_model
 {
 	public $title = 'default';

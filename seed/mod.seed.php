@@ -5,14 +5,15 @@
 include PATH_THIRD.'Seed/config'.EXT;
 
 /**
- * Seed Module Class
+ * Seed Module Class 
  *
  * @package         seed_ee_addon
- * @version         0.1
+ * @version         0.7.4
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
  */
+
 
 class Seed {
 	
@@ -32,9 +33,6 @@ class Seed {
 
 		// Load base model
 		$this->EE->load->library('Seed_model');
-
-		// Load any additional libs
-		//$this->EE->load->library('example_lib');
 
 		// Load other models
 		Seed_model::load_models();
