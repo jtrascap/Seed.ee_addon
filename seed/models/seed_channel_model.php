@@ -299,6 +299,30 @@ class Seed_channel_model extends Seed_model {
 		return $ret;
 	}
 
+
+	public function get_field_view( $type = 'text', $channel_id, $field_id, $field )
+	{	
+		$is_unknown = FALSE;
+
+		if( $type != 'text' AND $type != 'textarea' ) 
+		{
+			$is_unknown = TRUE;
+			$type = 'text';
+		}
+
+
+		$data = array( 'channel_id' 	=> $channel_id,
+						'field_id' 		=> $field_id,
+						'field' 		=> $field,
+						'is_unknown' 	=> $is_unknown );
+
+		$view = $this->EE->load->view( '../fieldtypes/'.$type.'/options', $data, TRUE);
+		
+		return $view;
+
+	}
+
+
 } // End class
 
 /* End of file Seed_project_model.php */

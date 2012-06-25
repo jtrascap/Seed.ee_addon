@@ -1,4 +1,4 @@
-<div id="seed_container">
+<div id="seed_container" class="mor">
 
 <?php if ($channels): ?>
 
@@ -33,136 +33,100 @@
 	<?php endif; ?>
 
 
-	<table class="mainTable" id="seed-new-seed" cellspacing="0" cellpadding="0">
-		<colgroup>
-			<col style="width:30%;" />
-			<col style="width:70%" />
-		</colgroup>
-		<thead>
-			<tr>
-				<th scope="col"><?=lang('preference')?></th>
-				<th scope="col"><?=lang('setting')?></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="<?=seed_row()?>">
-				<td style="text-align:right">
-					<label for="seed_channel">Channel to Seed</label>
-				</td>
-				<td>
-					<select style="width:30%" id="seed_channel" name="seed_channel">
-						<option value="">-</option>
-						<?php foreach( $channels as $channel_id => $channel ) : ?>
-							<option value="<?=$channel_id?>"><?=$channel['title']?></option>
-						<?php endforeach; ?>
-					</select>
-				</td>
-			</tr>
-			<tr class="<?=seed_row()?>">
-				<td style="text-align:right">
-					<label for="seed_count">Create How Many Entries?</label>
-				</td>
-				<td>
-					<input style="width:30%" type="number" id="seed_count" name="seed_count" value="10"/>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="tg">
+		<h2>Start a new seed</h2>
+		<table class="data" id="seed-new-seed">
+	        <tbody>
+	        	<tr class="<?=seed_row()?>">
+					<td scope="row" style="width:30%">
+						<label for="seed_channel">Channel to Seed</label>
+					</td>
+					<td>
+						<select style="width:30%" id="seed_channel" name="seed_channel">
+							<option value="">-</option>
+							<?php foreach( $channels as $channel_id => $channel ) : ?>
+								<option value="<?=$channel_id?>"><?=$channel['title']?></option>
+							<?php endforeach; ?>
+						</select>
+					</td>
+				</tr>
+				<tr class="<?=seed_row()?>" style="width:30%">
+					<td scope="row">
+						<label for="seed_count">Create How Many Entries?</label>
+					</td>
+					<td>
+						<input style="width:30%" type="number" id="seed_count" name="seed_count" value="10"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	
 
 
-	<?php foreach( $channels as $channel_id => $channel ) : ?>			
+	<?php foreach( $channels as $channel_id => $channel ) : ?>	
 
-	<table class="mainTable seed_fields_channel" id="seed_fields_channel_<?=$channel_id?>" cellspacing="0" cellpadding="0" style="display:none">
-		<colgroup>
-			<col style="width:30%;" />
-			<col style="width:20%" />
-			<col style="width:50%" />
-		</colgroup>
-		<thead>
-			<tr>
-				<th scope="col"><?=lang('seed_field')?></th>
-				<th scope="col"><?=lang('seed_populate')?></th>
-				<th scope="col"><?=lang('seed_field_values')?></th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach( $channel['fields'] as $field_id => $field ) : ?>
-			<tr class="<?=seed_row()?>">
-				<td style="text-align:right">
-					<label for="seed_field_<?=$channel_id?>_<?=$field_id?>">
-						<?=$field['field_label']?> - {<?=$field['field_name']?>}
-					</label>
-					<?php if( isset( $field['is_title'] ) ) : ?>
-						<p>Stanard Title Field.</p>
-					<?php else : ?>
-						<p><?=$field['field_type']?>, Formatting : <?=$field['field_fmt']?>, Content : <?=$field['field_content_type']?></p>
-					<?php endif; ?>
 
-				</td>
-				<td>					
-					<?php if( $field['field_required'] == 'y' ) : ?>
-						<label for="seed_field_<?=$channel_id?>_<?=$field_id?>">
-							<select style="width:100%" id="seed_field_<?=$channel_id?>_<?=$field_id?>" name="seed_field_<?=$channel_id?>_<?=$field_id?>">
-								<option value="always">Always Populate *Required Field*</option>
-							</select>
-						</label> 
-					<?php else : ?>
-						<label for="seed_field_<?=$channel_id?>_<?=$field_id?>">
-							<select style="width:100%" class="optional_field_populate_option" id="seed_field_<?=$channel_id?>_<?=$field_id?>" rel="seed_field_<?=$channel_id?>_<?=$field_id?>_options" name="seed_field_<?=$channel_id?>_<?=$field_id?>">
-								<option value="empty">Don't Populate</option>
-								<option value="sparse">Populate Sparsely</option>
-								<option value="always">Always Populate</option>
-							</select>
-						</label> 
-					<?php endif;?>
-				</td>	
-				<td>
-					<?php if( $field['field_required'] != 'y' ) : ?>
-					<div id="seed_field_<?=$channel_id?>_<?=$field_id?>_options" style="display:none">
-					<?php endif; ?>
+	<div class="seed_fields_channel" id="seed_fields_channel_<?=$channel_id?>" style="display:none; padding : 0 20px;">
 
-						<?php if( $field['field_type'] == 'text' ) : ?>
-
-							<p>Populate with between
-								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="1"/> 
-								and
-
-								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="10"/> 
-								Words
-							</p>
-							<p>Up to a max length of <strong>
-								<input style="width:10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_max" name="seed_field_<?=$channel_id?>_<?=$field_id?>_max" value="<?=$field['field_maxl']?>"/>
-								</strong> characters</p>
-
-						<?php endif; ?>
-
-						<?php if( $field['field_type'] == 'textarea' ) : ?>
-
-							<p>Populate with between
-								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_from" name="seed_field_<?=$channel_id?>_<?=$field_id?>_from" value="3"/> 
-								and
-
-								<input style="width : 10%" type="number" id="seed_field_<?=$channel_id?>_<?=$field_id?>_to" name="seed_field_<?=$channel_id?>_<?=$field_id?>_to" value="6"/> 
-								Paragraphs
-							</p>
-
-							</select>
-						</p>
-
-						<?php endif; ?>
+		<div class="tg">
+			<h2>Fields</h2>
+			<div class="alert">Select your population options for this channel's fields.</div>
 
 
 
-					<?php if( $field['field_required'] != 'y' ) : ?>
-					</div>
-					<?php endif; ?>
+		<?php foreach( $channel['fields'] as $field_id => $field ) : ?>
 
-				</td>			
-			</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
+		<?php if( $field['field_label'] != 'title' ) : ?>
+		<div class="tg">
+		<?php endif; ?> 
 
+			<div style="display:block">
+				<h3 style="background:#fff; border-top:3px double #849099; margin-top:-1px"><?=$field['field_label']?> <code>[<?=$field['field_name']?>]</code> <span class="help_text"><?=$field['field_type']?><?php if( $field['field_required'] == 'y' ) : ?>, *Required Field*<?php endif; ?></span></h3>
+			</div>
+
+			<table class="data">
+				<thead>
+					<tr>
+						<th colspan="2">
+						<?php if( $field['field_required'] == 'y' ) : ?>
+							<label for="seed_field_<?=$channel_id?>_<?=$field_id?>">
+								Populate Options : 
+								<select style="width:30%" class="optional_field_populate_option" id="seed_field_<?=$channel_id?>_<?=$field_id?>" rel="seed_field_<?=$channel_id?>_<?=$field_id?>_options" name="seed_field_<?=$channel_id?>_<?=$field_id?>">
+									<option value="always">Always Populate</option>
+								</select>
+							</label>
+						<?php else : ?>
+							<label for="seed_field_<?=$channel_id?>_<?=$field_id?>">
+								Populate Options : 
+								<select style="width:30%" class="optional_field_populate_option" id="seed_field_<?=$channel_id?>_<?=$field_id?>" rel="seed_field_<?=$channel_id?>_<?=$field_id?>_options" name="seed_field_<?=$channel_id?>_<?=$field_id?>">
+									<option value="empty">Don't Populate</option>
+									<option value="sparse">Populate Sparsely</option>
+									<option value="always">Always Populate</option>
+								</select>
+							</label>
+						<?php endif;?>
+						</th>
+					</tr>
+				</head>
+
+
+				<tbody <?php if( $field['field_required'] == 'n' ) : ?>style="display:none"<?php endif; ?> id="seed_field_<?=$channel_id?>_<?=$field_id?>_options">
+
+				<!-- Field type options -->
+
+				<?php echo( $this->seed_channel_model->get_field_view( $field['field_type'], $channel_id, $field_id, $field ) ); ?>
+
+
+				</tbody>
+
+			</table>
+
+		</div>
+		<?php endforeach; ?>
+
+	</div>
 	<?php endforeach; ?>
 
 	<p><input type="submit" class="submit" value="<?=lang('start_seed')?>" /></p>

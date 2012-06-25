@@ -1,5 +1,36 @@
 $(function(){
 
+
+
+	$('.field_sub_option_select').each(function(){
+
+		var rel = $(this).attr('rel');
+		var val = $(this).val();
+
+		console.log(rel);
+		console.log(val);
+
+		if( val == '' ) $('.field_sub_option.'+rel).hide();
+		else $('.field_sub_option.'+rel+'.'+val).show();
+	});
+
+
+
+	$('.field_sub_option_select').change(function(){
+		
+		var rel = $(this).attr('rel');
+		var val = $(this).val();
+
+		console.log(rel);
+		console.log(val);
+
+		$('.field_sub_option.'+rel).hide();
+
+		if( val != '' ) $('.field_sub_option.'+rel+'.'+val).show();
+	});
+
+
+
 	$('#seed_channel').change( function() {
 
 		var channel_id = $(this).attr('value');
