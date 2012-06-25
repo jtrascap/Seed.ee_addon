@@ -16,7 +16,7 @@
 	</div>
 
 <?php elseif( $type == 'success' ) : ?>
-	
+
 	<div class="tg">
 		<h2>Success</h2>
 		<div class="alert success">
@@ -68,7 +68,7 @@
 	<?php foreach( $channels as $channel_id => $channel ) : ?>	
 
 
-	<div class="seed_fields_channel" id="seed_fields_channel_<?=$channel_id?>" style="display:none; padding : 0 20px;">
+	<div class="seed_fields_channel" id="seed_fields_channel_<?=$channel_id?>" style="display:none;">
 
 		<div class="tg">
 			<h2>Fields</h2>
