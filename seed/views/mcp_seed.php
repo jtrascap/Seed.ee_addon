@@ -62,9 +62,6 @@
 		</table>
 	</div>
 
-	
-
-
 	<?php foreach( $channels as $channel_id => $channel ) : ?>	
 
 
@@ -73,14 +70,15 @@
 		<div class="tg">
 			<h2>Fields</h2>
 			<div class="alert">Select your population options for this channel's fields.</div>
-
-
+		</div>
 
 		<?php foreach( $channel['fields'] as $field_id => $field ) : ?>
 
-		<?php if( $field['field_label'] != 'title' ) : ?>
+		<?php if( $field['field_label'] != 'title' ) : ?> 
+		<div class="tg" style="margin-top : -20px">
+		<?php else : ?>
 		<div class="tg">
-		<?php endif; ?> 
+		<?php endif; ?>
 
 			<div style="display:block">
 				<h3 style="background:#fff; border-top:3px double #849099; margin-top:-1px"><?=$field['field_label']?> <code>[<?=$field['field_name']?>]</code> <span class="help_text"><?=$field['field_type']?><?php if( $field['field_required'] == 'y' ) : ?>, *Required Field*<?php endif; ?></span></h3>
@@ -88,7 +86,7 @@
 
 			<table class="data">
 				<thead>
-					<tr>
+					<tr style="background-color :transparent">
 						<th colspan="2">
 						<?php if( $field['field_required'] == 'y' ) : ?>
 							<label for="seed_field_<?=$channel_id?>_<?=$field_id?>">
@@ -124,12 +122,14 @@
 			</table>
 
 		</div>
+
 		<?php endforeach; ?>
 
 	</div>
 	<?php endforeach; ?>
 
 	<p><input type="submit" class="submit" value="<?=lang('start_seed')?>" /></p>
+
 </form>
 
 <?php else : ?>
