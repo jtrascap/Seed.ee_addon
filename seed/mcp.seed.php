@@ -19,7 +19,7 @@ class Seed_mcp
 		$this->controls[]  = $this->base.AMP.'method=settings';
 
 
-		$controls = array(  lang('seed')		=> $this->base . '&method=index');
+		$controls = array();
 
 		$this->EE->cp->set_right_nav( $controls );
 

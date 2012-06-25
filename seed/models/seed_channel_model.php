@@ -14,8 +14,6 @@ class Seed_channel_model extends Seed_model {
 	private $errors;
 	private $field_settings;
 
-	private $lorem = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-
 	// --------------------------------------------------------------------
 	// METHODS
 	// --------------------------------------------------------------------
@@ -33,17 +31,9 @@ class Seed_channel_model extends Seed_model {
 
 		// Initialize this model
 		$this->initialize(
-			'seed_example',
-			'account_id',
-			array(	
-				'site_id'       		=> 'int(4) unsigned NOT NULL',
-				'account_email'			=> 'varchar(100) NOT NULL',
-				'currency'				=> 'varchar(100) NOT NULL',
-				'return_success'		=> 'varchar(100) NOT NULL',
-				'return_failure'		=> 'varchar(100) NOT NULL',
-				'debug_mode'			=> 'int(1) unsigned NOT NULL',
-				'status'				=> 'varchar(100) NOT NULL',
-				'created_on'			=> 'int(10) unsigned NOT NULL')
+			'seed_channel',
+			'seed_id',
+			array()
 		);
 	}
 
