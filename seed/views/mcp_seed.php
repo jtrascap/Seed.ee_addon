@@ -1,37 +1,37 @@
 <div id="seed_container" class="mor">
 
-<?php if ($channels): ?>
+
+<?php if( $type == 'error' ) : ?>
+
+	<div class="tg">
+		<h2>Error</h2>
+		<div class="alert info">
+			There were <?php if( count( $errors ) > 1 ) :?>were some errors<?php else : ?>was an error<?php endif; ?> :
+			<ul>
+			<?php foreach( $errors as $error ) : ?>
+				<li><?=$error?></li>
+			<?php endforeach; ?>
+			</ul>
+		</div>
+	</div>
+
+<?php elseif( $type == 'success' ) : ?>
+	
+	<div class="tg">
+		<h2>Success</h2>
+		<div class="alert success">
+			<?php foreach( $success as $msg ) : ?>
+				<p><?=$msg?></p>
+			<?php endforeach; ?>
+		</div>
+
+	</div>
+
+<?php elseif ($channels): ?>
 
 <form method="post" action="<?=$base_url?>&amp;method=start_seed">
 
 	<input type="hidden" name="XID" value="<?=XID_SECURE_HASH?>" />
-
-	<?php if( $type == 'error' ) : ?>
-
-	<div class="seed_error">
-		<h3>There <?php if( count( $errors ) > 1 ) :?>were some errors<?php else : ?>was an error<?php endif; ?> : </h3>
-		<ul>
-		<?php foreach( $errors as $error ) : ?>
-			<li><?=$error?></li>
-		<?php endforeach; ?>
-		</ul>
-	</div>
-
-	<?php endif; ?>
-
-
-	<?php if( $type == 'success' ) : ?>
-
-	<div class="seed_error">
-		<h3>Success! </h3>
-
-		<?php foreach( $success as $msg ) : ?>
-			<p><?=$msg?></p>
-		<?php endforeach; ?>
-	</div>
-
-	<?php endif; ?>
-
 
 	<div class="tg">
 		<h2>Start a new seed</h2>

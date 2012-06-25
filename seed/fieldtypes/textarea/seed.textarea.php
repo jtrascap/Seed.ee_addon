@@ -9,17 +9,42 @@ class Seed_fieldtype_textarea extends Seed_fieldtype
 			'name' 			=> 'from',
 			'required' 		=> TRUE,
 			'type' 			=> 'int',
-			'count'			=> 'paragraphs',
-			'description' 	=> 'Shortest length',
 			'default'		=> 2
 		),		
 		array(
 			'name' 			=> 'to',
 			'required' 		=> TRUE,
 			'type' 			=> 'int',
-			'count'			=> 'paragraphs',
-			'description' 	=> 'Longest length',
 			'default' 		=> 6
 		)
 	);
+
+	public function generate( $field = array() )
+	{
+		$ret = '';
+
+		// Generate some text within the bounds of the options
+		if( $field['populate'] == 'sparse' )
+		{
+			// We don't want to always populate this. 
+			if( rand( 1, 2 ) == 1 ) $ret = $this->_generate_filler( $field );
+		}
+		else $ret = $this->_generate_filler( $field );
+
+		return $ret;
+	}
+
+
+
+	private function _generate_filler( $field = array() )
+	{
+
+		$ret = '';
+
+		$length = rand( $field['from'], $field['to'] );
+	
+		$ret = $this->EE->seed_generator_model->generate_paragraphs( $length );
+
+		return $ret;
+	}
 }

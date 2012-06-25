@@ -19,8 +19,7 @@ class Seed_mcp
 		$this->controls[]  = $this->base.AMP.'method=settings';
 
 
-		$controls = array(  lang('seed')		=> $this->base . '&method=index',
-							lang('settings')	=> $this->base . '&method=settings');
+		$controls = array(  lang('seed')		=> $this->base . '&method=index');
 
 		$this->EE->cp->set_right_nav( $controls );
 
@@ -58,7 +57,7 @@ class Seed_mcp
 		// --------------------------------------
 		// Load assets
 		// --------------------------------------
-
+		$this->_add_morphine();
 		$this->EE->cp->load_package_css('seed'.$this->nocache);
 		$this->EE->cp->load_package_js('seed'.$this->nocache);
 
@@ -76,7 +75,7 @@ class Seed_mcp
 
 		$results  = $this->EE->db->select('c.channel_id, c.channel_title, f.*')
 					->from('channels c')
-					->join('channel_fields f', 'c.field_group = f.group_id')
+					->join('channel_fields f', 'c.field_group = f.group_id', 'left')
 					->where('c.site_id', '1')
 			       	->order_by('c.channel_title', 'asc')
 			       	->order_by('f.field_order', 'asc')
@@ -95,10 +94,11 @@ class Seed_mcp
 				$this->data['channels'][$row['channel_id']]['fields'][0] = array('field_label'=>lang('title'), 'field_name'=>'title', 'is_title' => TRUE, 'field_required'=>'y', 'field_maxl' => '255', 'field_type' => 'text' );
 			}
 
+			if( $row['field_id'] == '' ) continue;
+
 			// Add custom fields to this channel
 			$this->data['channels'][$row['channel_id']]['fields'][$row['field_id']] = $row;
 		}
-
 
 		if( $type == 'error' )
 		{
@@ -165,7 +165,22 @@ class Seed_mcp
 			return $this->index( 'error', $return );
 		}
 
-		$ret[] = lang('seed_success_message');
+		// Get the basic details for the channel
+
+		$channel  = $this->EE->db->select('c.channel_id, c.channel_title')
+					->from('channels c')
+					->where('c.channel_id', $channel_id)
+					->get()
+					->row_array();
+
+		$ret[] = str_replace( 
+			 		array(	'%seed_count%',
+			 				'%channel_name%', 
+			 				'%channel_link%' ), 
+			 		array( 	$seed_count,
+			 				$channel['channel_title'],
+			 				str_replace( '&amp;D=', '&D=', BASE.'&C=content_edit&channel_id='.$channel_id ) ),
+			 		lang('seed_success_message'));
 
 		return $this->index( 'success', $ret );
 
@@ -178,7 +193,7 @@ class Seed_mcp
 	 * @access      public
 	 * @return      string
 	 */
-	function settings()
+	public function settings()
 	{
 		// --------------------------------------
 		// Load some libraries
@@ -218,6 +233,24 @@ class Seed_mcp
         
         $this->EE->functions->redirect($this->base . '&method=settings&msg=preferences_updated');
         exit;
+
+	}
+
+
+	private function _add_morphine()
+	{
+		$theme_folder_url = $this->EE->config->item('theme_folder_url');
+
+		if (substr($theme_folder_url, -1) != '/') {
+			$theme_folder_url .= '/';
+		}
+
+		$theme_folder_url .= "third_party/seed/";
+
+		$this->EE->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.$theme_folder_url.'styles/screen.css" />');
+
+		$this->EE->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'scripts/compressed.js"></script>');
+		
 
 	}
 

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-abstract class Seed_fieldtype
+abstract class Seed_fieldtype extends Seed_model
 {
 	public $title = 'default';
 	
@@ -25,5 +25,5 @@ abstract class Seed_fieldtype
 		
 		return $this;
 	}
-	
+
 }

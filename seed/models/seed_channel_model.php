@@ -163,8 +163,9 @@ class Seed_channel_model extends Seed_model {
 
 		if( !isset( $this->plugins[ $field['field_type'] ] ) )
 		{
-			$this->errors[] = lang('seed_error_unknown_fieldtype');
-			return array();
+			// Default unknown field types to text
+			$field['field_type'] = 'text';
+
 		}
 
 		$options = array();
@@ -185,6 +186,9 @@ class Seed_channel_model extends Seed_model {
 			if( isset( $setting['count'] ) ) $options['count'] = $setting['count'];
 		}
 
+		$options['field_type'] = $field['field_type'];
+		$options['field_name'] = $field['field_name'];
+
 
 		return $options;
 	}
@@ -200,7 +204,7 @@ class Seed_channel_model extends Seed_model {
 
 		$results  = $this->EE->db->select('c.channel_id, c.channel_title, f.*')
 					->from('channels c')
-					->join('channel_fields f', 'c.field_group = f.group_id')
+					->join('channel_fields f', 'c.field_group = f.group_id', 'left')
 					->where('c.site_id', '1')
 					->where('c.channel_id', $channel_id)
 			       	->order_by('c.channel_title', 'asc')
@@ -242,6 +246,10 @@ class Seed_channel_model extends Seed_model {
 		$data['author_id'] 			= 1;
 		$data['entry_date'] 		= $this->EE->localize->now;
 
+
+
+		// Loop this for as many times as we need to create
+		// as many entries from the input
 		for( $i = 0; $i < $seed['seed_count']; $i++ )
 		{
 			foreach( $seed['field_options'] as $field_id => $field ) 
@@ -256,17 +264,9 @@ class Seed_channel_model extends Seed_model {
 					$field_name = 'field_id_'.$field_id;
 				}
 
-				$dummy = '';
+				// Pass the generation over to the specific field type
+				$data[ $field_name ] = $this->EE->seed_plugins->$field['field_type']->generate( $field );
 
-				// Generate some text within the bounds of the options
-				if( $field['populate'] == 'sparse' )
-				{
-					// We don't want to always populate this. 
-					if( rand( 1, 2 ) == 1 ) $dummy = $this->_generate_filler( $field );
-				}
-				else $dummy = $this->_generate_filler( $field );
-
-				$data[ $field_name ] = $dummy;
 			}
 
 			if( $this->EE->api_channel_entries->submit_new_entry( $seed['channel_id'], $data ) === FALSE )
@@ -277,26 +277,6 @@ class Seed_channel_model extends Seed_model {
 		}
 
 		return TRUE;
-	}
-
-	private function _generate_filler( $options = array() )
-	{
-
-		$ret = '';
-
-		$length = rand( $options['from'], $options['to'] );
-
-		switch( $options['count'] ) {
-			case 'words' :
-				$ret = $this->EE->seed_generator_model->generate_words( $options['max'], $length );
-				break;
-			case 'textarea' :
-			default :
-				$ret = $this->EE->seed_generator_model->generate_paragraphs( $length );
-				break;
-		}
-
-		return $ret;
 	}
 
 

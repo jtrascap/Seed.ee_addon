@@ -16,9 +16,12 @@ $lang = array(
 	'seed_error_no_channel'			=> 'You must pass a channel to seed',
 	'seed_error_no_count'			=> 'You must pass a number of entries to seed',
 	'seed_error_count_not_positive'	=> 'Seed count needs to be a positive number',
+	'seed_error_unknown_fieldtype'	=> 'Unknown fieldtype, fallback population failed',
+
+	'missing_title'					=> 'No Title',
 
 	// Successes
-	'seed_success_message' 			=> 'Success. Created <strong>x</strong> entries within the <strong>XXX</strong> channel',
+	'seed_success_message' 			=> 'Created <strong>%seed_count%</strong> entries within the <strong>%channel_name%</strong> channel. <a href="%channel_link%">View the entries</a>',
 
 	'' => ''
 

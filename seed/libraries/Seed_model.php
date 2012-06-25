@@ -411,11 +411,9 @@ class Seed_model extends CI_Model {
 		
 		require_once SEED_FIELD_PLUGIN_PATH . 'seed.fieldtype.php';
 	
-		//$paths[] = SEED_FIELD_PLUGIN_PATH;
-
 		foreach( $plugin_list as $type ) 
 		{
-			$paths[] = SEED_FIELD_PLUGIN_PATH . '/' . $type;
+			if( trim($type) != '') $paths[] = SEED_FIELD_PLUGIN_PATH . '/' . $type;
 		}
 
 		$found_plugins = array();
@@ -440,7 +438,9 @@ class Seed_model extends CI_Model {
 				
 				$plugin = $this->create_child( $class );
 
-				$plugins[ $class] = get_object_vars($plugin);
+				$this->EE->seed_plugins->$class = $plugin;
+
+				$plugins[ $class ] = get_object_vars($plugin);
 			}
 		}
 		

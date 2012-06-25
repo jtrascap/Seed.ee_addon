@@ -92,7 +92,7 @@
 	</th>
 	<td>
 		<label for="seed_field_<?=$channel_id?>_<?=$field_id?>_set">
-    		<textarea></textarea>
+    		<textarea name="seed_field_<?=$channel_id?>_<?=$field_id?>_set" id="seed_field_<?=$channel_id?>_<?=$field_id?>_set"></textarea>
     	</label>
 	</td>
 </tr>
