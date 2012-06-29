@@ -2,13 +2,13 @@
 
 
 // include config file
-include PATH_THIRD.'Seed/config'.EXT;
+include PATH_THIRD.'seed/config'.EXT;
 
 /**
  * Seed Module Class 
  *
  * @package         seed_ee_addon
- * @version         0.9
+ * @version         0.9.1
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 

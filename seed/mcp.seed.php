@@ -4,7 +4,7 @@
  * Seed MCP File 
  *
  * @package         seed_ee_addon
- * @version         0.9
+ * @version         0.9.1
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -68,7 +68,7 @@ class Seed_mcp
 		// --------------------------------------
 		$this->_add_morphine();
 		$this->EE->cp->load_package_css('seed'.$this->nocache);
-		$this->EE->cp->load_package_js('seed'.$this->nocache);
+		//$this->EE->cp->load_package_js('seed'.$this->nocache);
 
 
 		$this->EE->cp->set_variable('cp_page_title', lang('seed_new_seed'));
@@ -259,6 +259,7 @@ class Seed_mcp
 		$this->EE->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.$theme_folder_url.'styles/screen.css" />');
 
 		$this->EE->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'scripts/compressed.js"></script>');
+		$this->EE->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'seed.js"></script>');
 		
 
 	}
