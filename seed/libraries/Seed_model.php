@@ -10,7 +10,7 @@ if ( ! class_exists('CI_model'))
  * Seed Base Model class
  *
  * @package         seed_ee_addon
- * @version         0.8
+ * @version         0.9
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 

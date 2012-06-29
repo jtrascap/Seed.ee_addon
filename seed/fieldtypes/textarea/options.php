@@ -7,7 +7,7 @@
     </td>
 </tr>
 
-<tr class="odd seed_field_<?=$channel_id?>_<?=$field_id?>_min">
+<tr class="even seed_field_<?=$channel_id?>_<?=$field_id?>_min">
 	<th scope="row">
         Maximum paragraph count
     </th>
