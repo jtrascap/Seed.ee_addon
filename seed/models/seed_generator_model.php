@@ -126,7 +126,7 @@ class Seed_generator_model extends Seed_model {
         }
 
 
-         return $this->_generate_paragraphs( $paragraphs, $str_arr);
+        return $this->_generate_paragraphs( $paragraphs, $str_arr);
     }
 
     public function _generate_table( $look_forward )

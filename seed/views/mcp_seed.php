@@ -113,7 +113,6 @@
 				<tbody <?php if( $field['field_required'] == 'n' ) : ?>style="display:none"<?php endif; ?> id="seed_field_<?=$channel_id?>_<?=$field_id?>_options">
 
 				<!-- Field type options -->
-
 				<?php echo( $this->seed_channel_model->get_field_view( $field['field_type'], $channel_id, $field_id, $field ) ); ?>
 
 

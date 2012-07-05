@@ -14,6 +14,10 @@ class Seed_channel_model extends Seed_model {
 	private $errors;
 	private $field_settings;
 
+	private $known_fieldtypes = array(	'text',
+										'textarea',
+										'wygwam');
+
 	// --------------------------------------------------------------------
 	// METHODS
 	// --------------------------------------------------------------------
@@ -106,7 +110,7 @@ class Seed_channel_model extends Seed_model {
 		$seed['channel_id'] = $channel_id;
 		$seed['seed_count']	= $seed_count;
 		$seed['field_options'] = $this->field_options;
-
+		
 		$results = $this->_generate( $seed );
 
 		if( !empty( $this->errors ) ) return $this->errors;
@@ -274,7 +278,7 @@ class Seed_channel_model extends Seed_model {
 	{	
 		$is_unknown = FALSE;
 
-		if( $type != 'text' AND $type != 'textarea' ) 
+		if( !in_array( $type, $this->known_fieldtypes ) )
 		{
 			$is_unknown = TRUE;
 			$type = 'text';
