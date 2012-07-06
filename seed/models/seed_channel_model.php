@@ -18,6 +18,8 @@ class Seed_channel_model extends Seed_model {
 										'textarea',
 										'wygwam');
 
+	private $overridden_fieldtypes = array( 'rte' => 'wygwam' );
+
 	// --------------------------------------------------------------------
 	// METHODS
 	// --------------------------------------------------------------------
@@ -157,8 +159,16 @@ class Seed_channel_model extends Seed_model {
 
 		if( !isset( $this->plugins[ $field['field_type'] ] ) )
 		{
-			// Default unknown field types to text
-			$field['field_type'] = 'text';
+			// This field may be being overridden 
+			if( array_key_exists( $field['field_type'], $this->overridden_fieldtypes ) )
+			{
+				$field['field_type'] = $this->overridden_fieldtypes[ $field['field_type'] ];
+			}
+			else
+			{
+				// Default unknown field types to text
+				$field['field_type'] = 'text';
+			}
 
 		}
 
@@ -277,6 +287,13 @@ class Seed_channel_model extends Seed_model {
 	public function get_field_view( $type = 'text', $channel_id, $field_id, $field )
 	{	
 		$is_unknown = FALSE;
+		$is_overridden = FALSE;
+
+		if( array_key_exists( $type, $this->overridden_fieldtypes ) )
+		{
+			$type = $this->overridden_fieldtypes[ $type ];
+			$is_overridden = TRUE;
+		}
 
 		if( !in_array( $type, $this->known_fieldtypes ) )
 		{
@@ -288,7 +305,8 @@ class Seed_channel_model extends Seed_model {
 		$data = array( 'channel_id' 	=> $channel_id,
 						'field_id' 		=> $field_id,
 						'field' 		=> $field,
-						'is_unknown' 	=> $is_unknown );
+						'is_unknown' 	=> $is_unknown,
+						'is_overridden' => $is_overridden );
 
 		$view = $this->EE->load->view( '../fieldtypes/'.$type.'/options', $data, TRUE);
 		

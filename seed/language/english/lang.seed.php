@@ -17,6 +17,7 @@ $lang = array(
 	'seed_error_no_count'			=> 'You must pass a number of entries to seed',
 	'seed_error_count_not_positive'	=> 'Seed count needs to be a positive number',
 	'seed_error_unknown_fieldtype'	=> 'Unknown fieldtype, fallback population failed',
+	'seed_error_missing_required_value'	=> 'A required value was not passed',
 
 	'missing_title'					=> 'No Title',
 

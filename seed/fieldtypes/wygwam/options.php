@@ -23,18 +23,18 @@
         <br/>
         <br/>
         <span style="font-weight: normal">
-            Additional elements selected will not appear in every populated field. A few will be randomly chosen per entry from eon the total selected, and population size.
+            Extra markup can be added to the generated text. From these elements extra markup will be added to the field during text generation. <br/>Depending on the length of the text generated only some of the selected elements may be used.
         </span>
     </th>
     <td>
 
 
         <label style="display:block">
-            <input type="checkbox" id="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_a" name="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_a" value="y"/> links
+            <input type="checkbox" id="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_a" name="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_a" value="y" checked="checked"/> links
         </label>
 
         <label style="display:block">
-            <input type="checkbox" id="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_strong" name="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_strong" value="y"/> strong
+            <input type="checkbox" id="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_strong" name="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_strong" value="y" checked="checked"/> strong
         </label>
         <label style="display:block">
             <input type="checkbox" id="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_em" name="seed_field_<?=$channel_id?>_<?=$field_id?>_markup_em" value="y"/> em
