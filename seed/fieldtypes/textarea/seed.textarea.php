@@ -4,7 +4,7 @@
  * Seed Fieldtype Textarea class
  *
  * @package         seed_ee_addon
- * @version         0.9.1
+ * @version         0.9.2
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
