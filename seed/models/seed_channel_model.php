@@ -16,10 +16,12 @@ class Seed_channel_model extends Seed_model {
 
 	private $known_fieldtypes = array(	'text',
 										'textarea',
-										'wygwam');
+										'wygwam',
+										'playa');
 
 	private $overridden_fieldtypes = array( 'rte' => 'wygwam' );
 
+	private $has_settings = array( 'playa' );
 	// --------------------------------------------------------------------
 	// METHODS
 	// --------------------------------------------------------------------
@@ -254,7 +256,7 @@ class Seed_channel_model extends Seed_model {
 		$data['author_id'] 			= 1;
 		$data['entry_date'] 		= $this->EE->localize->now;
 
-
+		$this->EE->api_channel_fields->setup_entry_settings($seed['channel_id'], array());
 
 		// Loop this for as many times as we need to create
 		// as many entries from the input
@@ -273,18 +275,20 @@ class Seed_channel_model extends Seed_model {
 				}
 
 				$field['seed_count'] = $i;
+				$field['field_id'] = $field_id;
+				$field['channel_id'] = $seed['channel_id'];
 
 				// Pass the generation over to the specific field type
 				$data[ $field_name ] = $this->EE->seed_plugins->$field['field_type']->generate( $field );
 			}
 
-			$this->EE->api_channel_fields->setup_entry_settings($seed['channel_id'], $data);
 
 			if( $this->EE->api_channel_entries->submit_new_entry( $seed['channel_id'], $data ) === FALSE )
 			{
 				$this->errors = $this->EE->api_channel_entries->get_errors();
 				return FALSE;
 			}
+
 		}
 
 		return TRUE;
@@ -308,12 +312,33 @@ class Seed_channel_model extends Seed_model {
 			$type = 'text';
 		}
 
+		$settings = array();
+
+		if( in_array( $type, $this->has_settings ) )
+		{
+			if( !isset( $this->EE->seed_plugins ) ) 
+			{
+				// Get the settings only if we need them
+				$this->channel = $this->_get_details( $channel_id );
+				$this->_get_field_plugins();
+
+				$this->EE->load->library('api');
+				$this->EE->api->instantiate('channel_entries');
+				$this->EE->api->instantiate('channel_fields');
+
+				$this->EE->api_channel_fields->setup_entry_settings($channel_id, array());
+			}
+
+			// Get the settings for this fieldtype
+			$settings = $this->EE->seed_plugins->$type->get_settings( $field_id );
+		}
 
 		$data = array( 'channel_id' 	=> $channel_id,
 						'field_id' 		=> $field_id,
 						'field' 		=> $field,
 						'is_unknown' 	=> $is_unknown,
-						'is_overridden' => $is_overridden );
+						'is_overridden' => $is_overridden,
+						'settings' 		=> $settings );
 
 		$view = $this->EE->load->view( '../fieldtypes/'.$type.'/options', $data, TRUE);
 		
