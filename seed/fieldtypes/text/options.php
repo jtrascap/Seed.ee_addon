@@ -109,7 +109,7 @@
 	</th>
 	<td>
 		<label for="seed_field_<?=$channel_id?>_<?=$field_id?>_set">
-    		<input type="text" name="seed_field_<?=$channel_id?>_<?=$field_id?>_sequence" id="seed_field_<?=$channel_id?>_<?=$field_id?>_sequence" placeholder="Example {#}"/>
+    		<input type="text" style="width:50%"  name="seed_field_<?=$channel_id?>_<?=$field_id?>_sequence" id="seed_field_<?=$channel_id?>_<?=$field_id?>_sequence" placeholder="Example {#}"/>
     	</label>
 	</td>
 </tr>

@@ -243,8 +243,12 @@ class Seed_channel_model extends Seed_model {
 	{
 		if( empty( $seed ) ) return;
 
-		$this->EE->load->library('api/Api_channel_entries');
+		//$this->EE->load->library('api/Api_channel_entries');
 		// We have the seed. Go a head and generate
+
+		$this->EE->load->library('api');
+		$this->EE->api->instantiate('channel_entries');
+		$this->EE->api->instantiate('channel_fields');
 
 
 		$data['author_id'] 			= 1;
@@ -269,11 +273,12 @@ class Seed_channel_model extends Seed_model {
 				}
 
 				$field['seed_count'] = $i;
-				
+
 				// Pass the generation over to the specific field type
 				$data[ $field_name ] = $this->EE->seed_plugins->$field['field_type']->generate( $field );
-
 			}
+
+			$this->EE->api_channel_fields->setup_entry_settings($seed['channel_id'], $data);
 
 			if( $this->EE->api_channel_entries->submit_new_entry( $seed['channel_id'], $data ) === FALSE )
 			{
