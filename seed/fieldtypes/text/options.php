@@ -19,6 +19,7 @@
     		<select style="width:50%" name="seed_field_<?=$channel_id?>_<?=$field_id?>_values" id="seed_field_<?=$channel_id?>_<?=$field_id?>_values" rel="seed_field_<?=$channel_id?>_<?=$field_id?>" class="field_sub_option_select">
     			<option value="generated">Generated Dummy Text</option>
     			<option value="specific">Specific Text from a Set</option>
+    			<option value="sequence">Sequential Text</option>
     		</select>
     	</label>
 
@@ -93,6 +94,22 @@
 	<td>
 		<label for="seed_field_<?=$channel_id?>_<?=$field_id?>_set">
     		<textarea name="seed_field_<?=$channel_id?>_<?=$field_id?>_set" id="seed_field_<?=$channel_id?>_<?=$field_id?>_set"></textarea>
+    	</label>
+	</td>
+</tr>
+
+
+
+<tr class="even seed_field_<?=$channel_id?>_<?=$field_id?> sequence field_sub_option" style="display:none">
+	<th scope="row">
+		Sequence
+		<span class="help_text">
+			The marker <strong>{#}</strong> will be replaced with the current seed count.<br/> ie. 'Example 1', 'Example 2', 'Example 3'
+		</span>
+	</th>
+	<td>
+		<label for="seed_field_<?=$channel_id?>_<?=$field_id?>_set">
+    		<input type="text" name="seed_field_<?=$channel_id?>_<?=$field_id?>_sequence" id="seed_field_<?=$channel_id?>_<?=$field_id?>_sequence" placeholder="Example {#}"/>
     	</label>
 	</td>
 </tr>

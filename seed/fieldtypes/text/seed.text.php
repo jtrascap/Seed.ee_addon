@@ -49,6 +49,12 @@ class Seed_fieldtype_text extends Seed_fieldtype
 			'required' 		=> FALSE,
 			'type' 			=> 'text',
 			'default'		=> ''
+		),
+		array(
+			'name' 			=> 'sequence',
+			'required' 		=> FALSE,
+			'type' 			=> 'text',
+			'default'		=> ''
 		)
 	);
 
@@ -69,6 +75,11 @@ class Seed_fieldtype_text extends Seed_fieldtype
 			// Only return values from a specific set of possible 
 			$ret = $this->_generate_specific( $field );
 		}
+		elseif( $field['values'] == 'sequence' )
+		{
+			// Generate text based on the sequence provided
+			$ret = $this->_generate_sequence( $field );
+		}
 		else
 		{
 			// Go ahead and generate the text from a random source
@@ -79,6 +90,22 @@ class Seed_fieldtype_text extends Seed_fieldtype
 		return $ret;
 	}
 
+	private function _generate_sequence( $field = array() )
+	{
+		$marker = '{#}';
+		$ret = '';
+
+		// This count starts at 0, increment for our purposes
+		$count = $field['seed_count'] + 1;
+
+		// Try and replace the marker '{#}' in the passed sequence
+		$ret = str_replace( $marker, $count, $field['sequence'] );
+
+		if( $ret == '' ) $ret = $this->_generate_filler( $field );
+
+		return $ret;
+	}
+	
 
 	private function _generate_specific( $field = array() )
 	{

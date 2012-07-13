@@ -224,7 +224,7 @@ class Seed_channel_model extends Seed_model {
 			// Add 'Title' to fields while we're here
 			if ( ! isset($channels['fields']))
 			{
-				$channels['fields'][0] = array('field_label'=>lang('title'), 'field_name'=>'title', 'is_title' => TRUE, 'field_required'=>'y', 'field_maxl' => '255', 'field_type' => 'text' );
+				$channels['fields'][0] = array('field_label'=>lang('title'), 'field_name'=>'title', 'is_title' => TRUE, 'field_required'=>'y', 'field_maxl' => '100', 'field_type' => 'text' );
 			}
 
 			// Add custom fields to this channel
@@ -268,6 +268,8 @@ class Seed_channel_model extends Seed_model {
 					$field_name = 'field_id_'.$field_id;
 				}
 
+				$field['seed_count'] = $i;
+				
 				// Pass the generation over to the specific field type
 				$data[ $field_name ] = $this->EE->seed_plugins->$field['field_type']->generate( $field );
 
