@@ -4,7 +4,7 @@
  * Seed MCP File 
  *
  * @package         seed_ee_addon
- * @version         0.9.3
+ * @version         0.9.4
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -104,6 +104,18 @@ class Seed_mcp
 			}
 
 			if( $row['field_id'] == '' ) continue;
+
+			if( $row['field_type'] == 'matrix' )
+			{
+				$this->EE->seed_channel_model->get_plugin( 'matrix' );
+				// Decode the settings
+				$settings = unserialize( base64_decode( $row['field_settings'] ) );
+
+				$row['cells'] = $this->EE->seed_plugins->$row['field_type']->get_cell_types( $settings );
+
+				// Now unset that plugin so we're clean for later
+				unset( $this->EE->seed_plugins );
+			}
 
 			// Add custom fields to this channel
 			$this->data['channels'][$row['channel_id']]['fields'][$row['field_id']] = $row;
@@ -260,6 +272,57 @@ class Seed_mcp
 
 		$this->EE->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'scripts/compressed.js"></script>');
 		$this->EE->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'seed.js"></script>');
+
+
+		// Add datepicker
+
+
+		$date_fmt = $this->EE->session->userdata('time_format');
+		$date_fmt = $date_fmt ? $date_fmt : $this->EE->config->item('time_format');
+
+		$this->EE->cp->add_to_head('<style type="text/css">.hasDatepicker{background:#fff url('.$this->EE->config->item('theme_folder_url').'cp_themes/default/images/calendar_bg.gif) no-repeat 98% 2px;background-repeat:no-repeat;background-position:99%;}</style>');
+		$this->EE->cp->add_to_head( trim('
+			<script type="text/javascript">
+				$.createDatepickerTime=function(){
+					date = new Date();
+					hours = date.getHours();
+					minutes = date.getMinutes();
+					suffix = "";
+					format = "'.$date_fmt.'";
+				
+					if (minutes < 10) {
+						minutes = "0" + minutes;
+					}
+				
+					if (format == "us") {
+						if (hours > 12) {
+							hours -= 12;
+							suffix = " PM";
+						} else if (hours == 12) {
+							suffix = " PM";
+						} else {
+							suffix = " AM";
+						}
+					}
+				
+					return " \'" + hours + ":" + minutes + suffix + "\'";
+				}
+			
+				EE.date_obj_time = $.createDatepickerTime();
+			</script>') );
+
+
+		// Set up date js
+		$this->EE->javascript->output('
+			$("#entry_date").datepicker({dateFormat: $.datepicker.W3C + date_obj_time, defaultDate: new Date('.( $this->EE->localize->set_localized_time( $this->EE->localize->now * 1000).')});
+		') );
+
+
+		$this->EE->cp->add_js_script(array(
+			'ui'		=> 'datepicker'
+		));
+
+		$this->EE->javascript->compile();
 		
 
 	}

@@ -4,7 +4,7 @@
  * Seed Abstract Field class
  *
  * @package         seed_ee_addon
- * @version         0.9.3
+ * @version         0.9.4
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -35,4 +35,13 @@ abstract class Seed_fieldtype extends Seed_model
 		return $this;
 	}
 
+	public function handle_post( $plugins, $settings = array(), $input_base = '' )
+	{
+		return array();
+	}
+
+	public function post_save( $entry_id, $data, $field ) 
+	{
+		return;
+	}
 }

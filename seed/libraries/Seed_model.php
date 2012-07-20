@@ -10,7 +10,7 @@ if ( ! class_exists('CI_model'))
  * Seed Base Model class
  *
  * @package         seed_ee_addon
- * @version         0.9.3
+ * @version         0.9.4
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -455,6 +455,50 @@ class Seed_model extends CI_Model {
 		
 		return $plugins;
 	}
+
+	// --------------------------------------------------------------------
+
+	public function get_plugin( $plugin_name )
+	{
+		$this->EE->load->helper(array('file'));
+		
+		$plugins = array();
+		
+		require_once SEED_FIELD_PLUGIN_PATH . 'seed.fieldtype.php';
+	
+		$paths[] = SEED_FIELD_PLUGIN_PATH . '/' . $plugin_name;
+
+		$found_plugins = array();
+
+		foreach ($paths as $i => $path)
+		{
+			if ( ! is_dir($path))
+			{
+				continue;
+			}
+			
+			foreach (get_filenames($path, TRUE) as $file)
+			{
+				$class = basename($file, EXT);
+
+				if (strpos($class, 'seed.') !== 0 || strpos($class, '~') !== FALSE)
+				{
+					continue;
+				}
+
+				$class = substr( $class, 5 );
+				
+				$plugin = $this->create_child( $class );
+
+				$this->EE->seed_plugins->$class = $plugin;
+
+				$plugins[ $class ] = get_object_vars($plugin);
+			}
+		}
+		
+		return $plugins;
+	}
+
 
 	public static function create_child($path)
 	{

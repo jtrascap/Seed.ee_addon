@@ -4,7 +4,7 @@
  * Seed Channel Model class
  *
  * @package         seed_ee_addon
- * @version         0.9.3
+ * @version         0.9.4
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -14,14 +14,16 @@ class Seed_channel_model extends Seed_model {
 	private $errors;
 	private $field_settings;
 
-	private $known_fieldtypes = array(	'text',
+	public $known_fieldtypes = array(	'text',
 										'textarea',
 										'wygwam',
-										'playa');
+										'playa',
+										'matrix');
 
-	private $overridden_fieldtypes = array( 'rte' => 'wygwam' );
+	public $overridden_fieldtypes = array( 'rte' => 'wygwam' );
 
-	private $has_settings = array( 'playa' );
+	public $has_settings = array( 'playa', 'matrix' );
+
 	// --------------------------------------------------------------------
 	// METHODS
 	// --------------------------------------------------------------------
@@ -90,7 +92,6 @@ class Seed_channel_model extends Seed_model {
 		// Now collect passed field settings
 		$this->field_options = array();
 
-		// /die('<prE>'.print_R($_POST,1));
 
 		foreach( $this->channel['fields'] as $field_id => $field ) 
 		{
@@ -125,7 +126,7 @@ class Seed_channel_model extends Seed_model {
 	private function _get_field_plugins()
 	{
 		// We use this to first filter down the list of needed fields 
-		// so we can get teh plugin list lazily 
+		// so we can get the plugin list lazily 
 
 		$plugin_list = array();
 
@@ -190,8 +191,13 @@ class Seed_channel_model extends Seed_model {
 
 			$options[ $setting['name'] ] = $value;
 			if( isset( $setting['count'] ) ) $options['count'] = $setting['count'];
+
 		}
 
+		// Pass this over to the seed fieldtype for additional handling if requried
+		$extra = $this->EE->seed_plugins->$field['field_type']->handle_post( $this->plugins, $field, $input_base );
+
+		$options['extra'] = $extra;
 		$options['field_type'] = $field['field_type'];
 		$options['field_name'] = $field['field_name'];
 
@@ -262,6 +268,7 @@ class Seed_channel_model extends Seed_model {
 		// as many entries from the input
 		for( $i = 0; $i < $seed['seed_count']; $i++ )
 		{
+
 			foreach( $seed['field_options'] as $field_id => $field ) 
 			{
 				// Field_id 0 is the title
@@ -289,22 +296,30 @@ class Seed_channel_model extends Seed_model {
 				return FALSE;
 			}
 
+			$entry_id = $this->EE->api_channel_entries->entry_id;
+
+			$this->EE->seed_plugins->$field['field_type']->post_save( $entry_id, $data, $field );
 		}
 
 		return TRUE;
 	}
 
 
-	public function get_field_view( $type = 'text', $channel_id, $field_id, $field )
+	public function get_field_view( $type = 'text', $channel_id, $field_id, $field, $cell = array() )
 	{	
 		$is_unknown = FALSE;
 		$is_overridden = FALSE;
+		$is_cell = FALSE;
+		$has_post_save = FALSE;
+
+		if( !empty( $cell ) ) $is_cell = TRUE;
 
 		if( array_key_exists( $type, $this->overridden_fieldtypes ) )
 		{
 			$type = $this->overridden_fieldtypes[ $type ];
 			$is_overridden = TRUE;
 		}
+
 
 		if( !in_array( $type, $this->known_fieldtypes ) )
 		{
@@ -338,7 +353,9 @@ class Seed_channel_model extends Seed_model {
 						'field' 		=> $field,
 						'is_unknown' 	=> $is_unknown,
 						'is_overridden' => $is_overridden,
-						'settings' 		=> $settings );
+						'settings' 		=> $settings,
+						'is_cell'		=> $is_cell,
+						'cell'			=> $cell );
 
 		$view = $this->EE->load->view( '../fieldtypes/'.$type.'/options', $data, TRUE);
 		

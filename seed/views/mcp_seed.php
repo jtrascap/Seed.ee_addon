@@ -58,18 +58,20 @@
 						<input style="width:30%" type="number" id="seed_count" name="seed_count" value="10"/>
 					</td>
 				</tr>
+
+
 			</tbody>
 		</table>
 	</div>
 
+	
 	<?php foreach( $channels as $channel_id => $channel ) : ?>	
-
 
 	<div class="seed_fields_channel" id="seed_fields_channel_<?=$channel_id?>" style="display:none;">
 
 		<div class="tg">
 			<h2>Fields</h2>
-			<div class="alert">Select your population options for this channel's fields.</div>
+			<div class="alert info">Select your population options for this channel's fields.</div>
 		</div>
 
 		<?php foreach( $channel['fields'] as $field_id => $field ) : ?>
@@ -107,7 +109,7 @@
 						<?php endif;?>
 						</th>
 					</tr>
-				</head>
+				</thead>
 
 
 				<tbody <?php if( $field['field_required'] == 'n' ) : ?>style="display:none"<?php endif; ?> id="seed_field_<?=$channel_id?>_<?=$field_id?>_options">

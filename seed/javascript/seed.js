@@ -45,4 +45,15 @@ $(function(){
 
 	});
 
+
+	$('.channel_advanced_options').change( function() {
+
+		var rel = $(this).attr('rel');
+		var value = $(this).attr('value');
+
+		if( value == 'empty' ) $( '#' + rel ).hide();
+		else $( '#' + rel ).show();
+		
+	});
+
 });

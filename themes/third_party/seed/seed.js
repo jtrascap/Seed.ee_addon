@@ -1,7 +1,5 @@
 $(function(){
 
-
-
 	$('.field_sub_option_select').each(function(){
 
 		var rel = $(this).attr('rel');
@@ -42,6 +40,9 @@ $(function(){
 		if( value == 'empty' ) $( '#' + rel ).hide();
 		else $( '#' + rel ).show();
 
+
+		if( value == 'empty' ) $( '.' + rel ).hide();
+		else $( '.' + rel ).show();
 
 	});
 

@@ -4,7 +4,7 @@
  * Seed Fieldtype Playa class
  *
  * @package         seed_ee_addon
- * @version         0.9.3
+ * @version         0.9.4
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -32,15 +32,41 @@ class Seed_fieldtype_playa extends Seed_fieldtype
 	private $authors;
 	private $ids_used = array();
 
-	public function get_settings( $field_id = 0 )
+	public function get_settings( $field = array() )
 	{
 		$return = array();
 
-		if( $field_id == 0 ) return $return;
-		if( !isset( $this->EE->api_channel_fields->settings[ $field_id ] ) ) return $return;
+		$field_id = $field['field_id'];
+		$is_cell = FALSE;
+		
+		if( isset( $field['cell_id'] ) )
+		{
+			$cell_id = $field['cell_id'];
+			$is_cell = TRUE;
+		}
+
+		if( !$is_cell ) 
+		{
+			if( $field_id == 0 ) return $return;
+			if( !isset( $this->EE->api_channel_fields->settings[ $field_id ] ) ) return $return;
 
 
-		$settings = $this->EE->api_channel_fields->settings[ $field_id ]['field_settings'];
+			$settings = $this->EE->api_channel_fields->settings[ $field_id ]['field_settings'];
+		}
+		else
+		{
+			if( $cell_id == 0 ) return $return;
+
+			$cell = $this->EE->db->select('col_settings')
+								->where('col_id', $cell_id )
+								->get('matrix_cols')
+								->row_array();
+
+			if( empty( $cell ) ) return $return;
+
+			$settings = $cell['col_settings'];		
+
+		}
 		$settings = unserialize( base64_decode( $settings ) );
 
 		if( !is_array( $settings ) ) return array();
@@ -59,8 +85,8 @@ class Seed_fieldtype_playa extends Seed_fieldtype
 			// We don't want to always populate this. 
 			if( rand( 1, 2 ) == 2 ) return $ret;
 		}
-			
-		$settings = $this->get_settings( $field['field_id'] );
+
+		$settings = $this->get_settings( $field );
 
 		// Figure out the channels to select from
 		$this->channels = array();
