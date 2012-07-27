@@ -30,14 +30,14 @@
 </div>
 
 
-	<div class="tg seed_field_<?=$channel_id?>_<?=$field_id?>_options" style="margin-left : 5%;  <?php if( $field['field_required'] == 'n' ) : ?>display:none<?php endif; ?>">
+	<div class="tg seed_field_<?=$channel_id?>_<?=$field_id?>_options" style="margin-left : 10%;  <?php if( $field['field_required'] == 'n' ) : ?>display:none<?php endif; ?>">
 
 		<h2>Cell Options</h2>
 		<div class="alert info">Select options for the Matrix cells</div>
 
 	</div>
 
-	<div class="tg seed_field_<?=$channel_id?>_<?=$field_id?>_options" style="margin-left : 5%;  <?php if( $field['field_required'] == 'n' ) : ?>display:none<?php endif; ?>">
+	<div class="tg seed_field_<?=$channel_id?>_<?=$field_id?>_options" style="margin-left : 10%;  <?php if( $field['field_required'] == 'n' ) : ?>display:none<?php endif; ?>">
 
 		<!-- Now we need to go through the sub-listed cells and init the specific fieldtypes if they're around -->
 

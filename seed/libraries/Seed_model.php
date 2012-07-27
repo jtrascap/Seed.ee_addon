@@ -513,5 +513,66 @@ class Seed_model extends CI_Model {
 		return $child;
 	}
 
+
+	// --------------------------------------------------------------------
+
+	public function get_options( $options_list )
+	{
+		$this->EE->load->helper(array('file'));
+		
+		$options = array();
+		
+		require_once SEED_OPTION_PLUGIN_PATH . 'seed.option.php';
+	
+		foreach( $options_list as $type ) 
+		{
+			if( trim($type) != '') $paths[] = SEED_OPTION_PLUGIN_PATH . '/' . $type;
+		}
+
+		$found_options = array();
+
+		foreach ($paths as $i => $path)
+		{
+			if ( ! is_dir($path))
+			{
+				continue;
+			}
+			
+			foreach (get_filenames($path, TRUE) as $file)
+			{
+				$class = basename($file, EXT);
+
+				if (strpos($class, 'seed.') !== 0 || strpos($class, '~') !== FALSE)
+				{
+					continue;
+				}
+
+				$class = substr( $class, 5 );
+				
+				$option = $this->create_option( $class );
+
+				$this->EE->seed_options->$class = $option;
+
+				$options[ $class ] = get_object_vars($option);
+			}
+		}
+		
+		return $options;
+	}
+
+
+	public static function create_option($path)
+	{
+		$class = 'Seed_option_' . $path;
+
+		require_once SEED_OPTION_PLUGIN_PATH . $path . '/seed.'. $path . EXT;
+
+		$child = new $class;
+				
+		$child->initialize();
+		
+		return $child;
+	}
+
 }
 // End of file Seed_model.php

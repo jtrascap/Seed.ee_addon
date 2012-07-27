@@ -22,7 +22,7 @@
         Include Additional Elements
         <br/>
         <br/>
-        <span style="font-weight: normal">
+        <span class="help_text">
             Extra markup can be added to the generated text. From these elements extra markup will be added to the field during text generation. <br/>Depending on the length of the text generated only some of the selected elements may be used.
         </span>
     </th>

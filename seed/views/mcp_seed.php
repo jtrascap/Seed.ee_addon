@@ -69,17 +69,99 @@
 
 	<div class="seed_fields_channel" id="seed_fields_channel_<?=$channel_id?>" style="display:none;">
 
+
+		<div class="tg">
+			<h2>Channel Options</h2>
+			<div class="alert success">Select your channel specific options</div>
+		</div>
+
+		<!-- Standard Options First -->
+		<?php $i = 0;
+		$has_options = FALSE;
+
+		foreach( $standard_options as $option ) : ?>
+
+			<?php if( $option['visible'] === TRUE ) :	
+			$i++; $has_options = TRUE; ?>
+
+				<?php if( $i > 1 ) : ?> 
+				<div class="tg" style="margin-top : -20px; margin-left : 5%">
+				<?php else : ?>
+				<div class="tg" style=" margin-left : 5%;">
+				<?php endif; ?>
+
+					<div style="display:block">
+						<h3 style="background:#fff; border-top:3px double #849099; margin-top:-1px"><?=$option['option_label']?></h3>
+					</div>
+
+
+					<table class="data">
+						<tbody>										
+							
+						<!-- Field type options -->
+						<?php echo( $this->seed_channel_model->get_option_view( $option['option_type'], $channel_id, $option ) ); ?>
+
+						</tbody>
+					</table>
+
+				</div>
+
+			<?php endif; ?>
+
+		<?php endforeach; 
+
+
+		foreach( $channel['options'] as $option ) : ?>
+		
+			<?php if( $option['visible'] === TRUE ) :	
+				$i++; $has_options = TRUE; ?>
+
+				<?php if( $i > 1 ) : ?> 
+				<div class="tg" style="margin-top : -20px; margin-left : 5%">
+				<?php else : ?>
+				<div class="tg" style=" margin-left : 5%;">
+				<?php endif; ?>
+
+					<div style="display:block">
+						<h3 style="background:#fff; border-top:3px double #849099; margin-top:-1px"><?=$option['option_label']?></h3>
+					</div>
+
+
+					<table class="data">
+						<tbody>										
+							
+						<!-- Field type options -->
+						<?php echo( $this->seed_channel_model->get_option_view( $option['option_type'], $channel_id, $option ) ); ?>
+
+						</tbody>
+					</table>
+
+				</div>
+
+			<?php endif;
+
+		endforeach; ?>
+
+		<?php if( $has_options == FALSE ) : ?>
+
+			<div class="tg" style=" margin-left : 5%">
+				<div class="alert warning">
+					There are no options available for this channel
+				</div>
+			</div>
+		<?php endif; ?>
+
 		<div class="tg">
 			<h2>Fields</h2>
-			<div class="alert info">Select your population options for this channel's fields.</div>
+			<div class="alert success">Select your population options for this channel's fields.</div>
 		</div>
 
 		<?php foreach( $channel['fields'] as $field_id => $field ) : ?>
 
 		<?php if( $field['field_label'] != 'title' ) : ?> 
-		<div class="tg" style="margin-top : -20px">
+		<div class="tg" style="margin-top : -20px; margin-left : 5%">
 		<?php else : ?>
-		<div class="tg">
+		<div class="tg" style=" margin-left : 5%;">
 		<?php endif; ?>
 
 			<div style="display:block">

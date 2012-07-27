@@ -202,7 +202,7 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 		foreach( $rows as $row )
 		{
 			$data = array();
-
+			
 			$data['site_id'] = $this->EE->config->item('site_id');
 			$data['field_id'] = $field['field_id'];
 			$data['entry_id'] = $entry_id;

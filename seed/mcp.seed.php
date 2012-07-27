@@ -15,6 +15,7 @@ class Seed_mcp
 	public $module_name;
 	private $nocache;
 	private $data;
+	private $result;
 
 	function __construct()
 	{
@@ -74,52 +75,8 @@ class Seed_mcp
 		$this->EE->cp->set_variable('cp_page_title', lang('seed_new_seed'));
 
 		// Get the channel list
-
-
 		$this->data['channels'] = array();
-
-		// --------------------------------------
-		// Get channels and searchable fields
-		// --------------------------------------
-
-		$results  = $this->EE->db->select('c.channel_id, c.channel_title, f.*')
-					->from('channels c')
-					->join('channel_fields f', 'c.field_group = f.group_id', 'left')
-					->where('c.site_id', '1')
-			       	->order_by('c.channel_title', 'asc')
-			       	->order_by('f.field_order', 'asc')
-					->get()
-					->result_array();
-
-		
-		foreach( $results as $row )
-		{
-			// Remember channel title
-			$this->data['channels'][$row['channel_id']]['title'] = $row['channel_title'];
-
-			// Add 'Title' to fields while we're here
-			if ( ! isset($this->data['channels'][$row['channel_id']]['fields']))
-			{
-				$this->data['channels'][$row['channel_id']]['fields'][0] = array('field_label'=>lang('title'), 'field_name'=>'title', 'is_title' => TRUE, 'field_required'=>'y', 'field_maxl' => '255', 'field_type' => 'text' );
-			}
-
-			if( $row['field_id'] == '' ) continue;
-
-			if( $row['field_type'] == 'matrix' )
-			{
-				$this->EE->seed_channel_model->get_plugin( 'matrix' );
-				// Decode the settings
-				$settings = unserialize( base64_decode( $row['field_settings'] ) );
-
-				$row['cells'] = $this->EE->seed_plugins->$row['field_type']->get_cell_types( $settings );
-
-				// Now unset that plugin so we're clean for later
-				unset( $this->EE->seed_plugins );
-			}
-
-			// Add custom fields to this channel
-			$this->data['channels'][$row['channel_id']]['fields'][$row['field_id']] = $row;
-		}
+		$this->_get_channel_data();
 
 		if( $type == 'error' )
 		{
@@ -327,6 +284,244 @@ class Seed_mcp
 
 	}
 
+
+	public function _get_channel_data()
+	{
+
+		// --------------------------------------
+		// Get channels and searchable fields
+		// --------------------------------------
+
+		$results  = $this->EE->db->select('c.channel_id, c.channel_title, f.*')
+					->from('channels c')
+					->join('channel_fields f', 'c.field_group = f.group_id', 'left')
+					->where('c.site_id', '1')
+			       	->order_by('c.channel_title', 'asc')
+			       	->order_by('f.field_order', 'asc')
+					->get()
+					->result_array();
+
+		
+		foreach( $results as $row )
+		{
+			// Remember channel title
+			$this->data['channels'][$row['channel_id']]['title'] = $row['channel_title'];
+
+			// Add 'Title' to fields while we're here
+			if ( ! isset($this->data['channels'][$row['channel_id']]['fields']))
+			{
+				$this->data['channels'][$row['channel_id']]['fields'][0] = array('field_label'=>lang('title'), 'field_name'=>'title', 'is_title' => TRUE, 'field_required'=>'y', 'field_maxl' => '255', 'field_type' => 'text' );
+			}
+
+			if( $row['field_id'] == '' ) continue;
+
+			if( $row['field_type'] == 'matrix' )
+			{
+				$this->EE->seed_channel_model->get_plugin( 'matrix' );
+				// Decode the settings
+				$settings = unserialize( base64_decode( $row['field_settings'] ) );
+
+				$row['cells'] = $this->EE->seed_plugins->$row['field_type']->get_cell_types( $settings );
+
+				// Now unset that plugin so we're clean for later
+				unset( $this->EE->seed_plugins );
+			}
+
+			// Add custom fields to this channel
+			$this->data['channels'][$row['channel_id']]['fields'][$row['field_id']] = $row;
+		}
+
+
+		// --------------------------------------
+		// Get standard channel options
+		// --------------------------------------
+		$this->_get_standard_options();
+
+		// Prep for per channel options
+		$this->_prep_channel_options();
+
+		// --------------------------------------
+		// Get per channel options
+		// --------------------------------------
+		foreach( $this->data['channels'] as $channel_id => $channel_info )
+		{
+			$this->_get_channel_options( $channel_id );
+
+			// Now get any additionals
+			// like structure
+			$this->_get_channel_structure( $channel_id );
+		}
+
+
+	}
+
+	private function _get_channel_structure( $channel_id )
+	{
+		if( !isset( $this->result['structure'] ) ) return;
+
+		// Now check if this channel is structure enabled
+		$structure = array();
+		foreach( $this->result['structure'] as $row )
+		{
+			if( $row['channel_id'] == $channel_id ) 
+			{
+				$structure = $row;
+			}
+		}
+
+		if( empty( $structure ) ) return;
+
+		// We appear to have a structure page
+		$option['option_label'] 	= 'Structure';
+		$option['option_type'] 		= 'structure';
+		$option['values']			= $structure;
+		$option['visible'] 			= ( $structure['type'] == 'page' ? TRUE : FALSE );
+		$option['pages']			= $this->result['structure_pages'];
+
+		$this->data['channels'][ $channel_id ]['options'][] = $option;
+	}
+
+	private function _prep_channel_options()
+	{
+		// Get statuses, categories for all channels
+
+		// Statuses
+		$statuses = $this->EE->db->select('s.*, c.channel_id')
+					->from('statuses s')
+					->join('channels c', 's.group_id = c.status_group', 'left')
+					->where('s.site_id', '1')
+					->order_by('s.status_order','asc')	
+					->get()
+					->result_array();
+		$this->result['statuses'] = $statuses;
+
+
+		// See if structure is installed and active for any channels
+		$has_structure = $this->EE->db->from('modules')
+									->where('module_name', 'Structure')
+									->get()
+									->row_array();
+		if( !empty( $has_structure ) ) 
+		{
+			// Get structure channels
+			$structure = $this->EE->db->from('structure_channels')
+										->where('type !=','unmanaged')
+										->get()
+										->result_array();
+			$this->result['structure'] = $structure;
+
+			// Get the site pages for display
+			$pages = $this->EE->db->select('site_pages')
+									->from('sites')
+									->where('site_id', '1')
+									->get()
+									->row_array();
+
+			$structure_data = $this->EE->db->select('entry_id')
+									->from('structure')
+									->where('parent_id', '0')
+									->order_by('lft', 'asc')
+									->get()
+									->result_array();
+
+
+
+			// Decode the pages
+			$structure_pages = array();
+
+			if( !empty( $pages ) ) $structure_pages = unserialize( base64_decode( $pages['site_pages'] ) );
+
+			if( !is_array( $structure_pages ) ) $structure_pages = array();
+
+			$structure_pages = current( $structure_pages );
+
+			$clean_pages = array();
+			// Clean up the pages, we only want top level items
+			$top_pages = array();
+			foreach( $structure_data as $row )
+			{
+				$top_pages[] = $row['entry_id'];
+			}
+
+			foreach( $structure_pages['uris'] as $page_id => $page_uri )
+			{
+				if( in_array( $page_id, $top_pages ) ) $clean_pages[ $page_id ] = $page_uri;
+			}
+
+			$structure_pages['clean'] = $clean_pages;
+			
+			$this->result['structure_pages'] = $structure_pages;
+		}
+		// Categories .. todo
+
+
+	}
+
+	private function _get_channel_options( $channel_id = 0 )
+	{
+		if( $channel_id == 0 ) return;
+
+		// Get this channel's variable options
+		// 		- statuses
+		//		- categories
+		
+		$this->_get_channel_statuses( $channel_id );
+
+		// TODO categories
+
+	}
+
+	private function _get_channel_statuses( $channel_id ) 
+	{
+		// Do we have statuses for this channel?
+		$channel_statuses = array();
+
+		if( isset( $this->result['statuses'] ) ) 
+		{
+			foreach( $this->result['statuses'] as $status )
+			{
+				if( $status['channel_id'] == $channel_id )
+				{
+					$channel_statuses[] = $status;
+				}
+			}
+		}
+
+		$statuses['option_label'] 		= 'Statuses';
+		$statuses['option_type']		= 'status';
+		$statuses['values']				= $channel_statuses;
+		$statuses['visible']			= ( count( $channel_statuses ) > 0 ? TRUE : FALSE );
+
+		$this->data['channels'][ $channel_id ]['options'][] = $statuses;
+	}
+
+	private function _get_standard_options()
+	{
+		// Standard, non channel specific or varying options
+		// 		- Start Date
+		//		- End Date
+
+		$options = array();
+
+		$entry_date['option_label'] 	= 'Start Date';
+		$entry_date['option_type'] 		= 'entry_date';
+		$entry_date['inital_value']		= $this->EE->localize->now;
+		$entry_date['visible']			= TRUE;
+		$options[] = $entry_date;
+
+
+
+		$expiry_date['option_label'] 	= 'Expiry Date';
+		$expiry_date['option_type'] 	= 'expiry_date';
+		$expiry_date['inital_value']	= 0;
+		$expiry_date['visible']			= TRUE;
+		$options[] = $expiry_date;
+
+
+//		$this->data['standard_options'] = $options;
+		$this->data['standard_options'] = array();
+
+	}
 
 
 

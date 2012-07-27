@@ -18,7 +18,11 @@ class Seed_channel_model extends Seed_model {
 										'textarea',
 										'wygwam',
 										'playa',
-										'matrix');
+										'matrix',
+										'structure' );
+
+	public $known_options = array(		'status',
+										'structure', );
 
 	public $overridden_fieldtypes = array( 'rte' => 'wygwam' );
 
@@ -89,9 +93,18 @@ class Seed_channel_model extends Seed_model {
 		// Check we can continue
 		if( !empty( $this->errors ) ) return $this->errors();
 
+		//Collect channel options
+		$this->channel_options = array();
+		foreach( $this->known_options as $option )
+		{
+			$input_base = 'seed_option_'.$channel_id.'_'.$option;
+			$value = $this->EE->input->post( $input_base );
+
+			if( $value != '' AND !empty( $value ) )	$this->channel_options[ $option ] = $value;
+		}
+
 		// Now collect passed field settings
 		$this->field_options = array();
-
 
 		foreach( $this->channel['fields'] as $field_id => $field ) 
 		{
@@ -112,9 +125,10 @@ class Seed_channel_model extends Seed_model {
 		if( !empty( $this->errors ) ) return $this->errors;
 
 		// Looks ok, go to generate
-		$seed['channel_id'] = $channel_id;
-		$seed['seed_count']	= $seed_count;
-		$seed['field_options'] = $this->field_options;
+		$seed['channel_id'] 		= $channel_id;
+		$seed['seed_count']			= $seed_count;
+		$seed['field_options'] 		= $this->field_options;
+		$seed['channel_options'] 	= $this->channel_options;
 		
 		$results = $this->_generate( $seed );
 
@@ -138,6 +152,9 @@ class Seed_channel_model extends Seed_model {
 		$plugin_list = array_unique( $plugin_list );
 
 		$this->plugins = $this->get_plugins( $plugin_list );
+
+		// Also get the full list of channel options
+		$this->options = $this->get_options( $this->known_options );
 
 		return;
 	}
@@ -262,12 +279,20 @@ class Seed_channel_model extends Seed_model {
 		$data['author_id'] 			= 1;
 		$data['entry_date'] 		= $this->EE->localize->now;
 
+		$meta = array();
+
 		$this->EE->api_channel_fields->setup_entry_settings($seed['channel_id'], array());
 
 		// Loop this for as many times as we need to create
 		// as many entries from the input
 		for( $i = 0; $i < $seed['seed_count']; $i++ )
 		{
+			foreach( $seed['channel_options'] as $option_name => $option_value )
+			{	
+				$value = $this->EE->seed_options->$option_name->generate( $option_value );
+
+				if( $value !== FALSE ) $data[ $option_name ] = $value;
+			}
 
 			foreach( $seed['field_options'] as $field_id => $field ) 
 			{
@@ -298,7 +323,23 @@ class Seed_channel_model extends Seed_model {
 
 			$entry_id = $this->EE->api_channel_entries->entry_id;
 
-			$this->EE->seed_plugins->$field['field_type']->post_save( $entry_id, $data, $field );
+
+			// Now wrap up an post save data we need
+			foreach( $seed['channel_options'] as $option_name => $option_value )
+			{				
+				$this->EE->seed_options->$option_name->post_save( $entry_id, $data, $option_value );
+			}
+
+			foreach( $seed['field_options'] as $field_id => $field ) 
+			{
+
+				$field['seed_count'] = $i;
+				$field['field_id'] = $field_id;
+				$field['channel_id'] = $seed['channel_id'];
+
+				$this->EE->seed_plugins->$field['field_type']->post_save( $entry_id, $data, $field );				
+			}
+
 		}
 
 		return TRUE;
@@ -358,6 +399,22 @@ class Seed_channel_model extends Seed_model {
 						'cell'			=> $cell );
 
 		$view = $this->EE->load->view( '../fieldtypes/'.$type.'/options', $data, TRUE);
+		
+		return $view;
+
+	}
+
+
+
+
+	public function get_option_view( $type = '', $channel_id, $option )
+	{	
+		if( $type == '' ) return '';
+
+		$data = array( 'channel_id' 	=> $channel_id,
+						'option' 		=> $option,);
+
+		$view = $this->EE->load->view( '../options/'.$type.'/view', $data, TRUE);
 		
 		return $view;
 
