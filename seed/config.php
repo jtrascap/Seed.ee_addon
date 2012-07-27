@@ -4,7 +4,7 @@
  * Seed Config File
  *
  * @package         seed_ee_addon
- * @version         0.9.4
+ * @version         1.0
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -14,7 +14,7 @@ if ( ! defined('SEED_NAME'))
 {
 	define('SEED_NAME',         'Seed');
 	define('SEED_CLASS_NAME',   'Seed');
-	define('SEED_VERSION',      '0.9.4');
+	define('SEED_VERSION',      '1.0');
 	define('SEED_DOCS',         'http://squarebit.co.uk/seed');
 	define('SEED_DEBUG',        TRUE);
 
