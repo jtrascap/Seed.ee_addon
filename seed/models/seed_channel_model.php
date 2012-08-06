@@ -4,7 +4,7 @@
  * Seed Channel Model class
  *
  * @package         seed_ee_addon
- * @version         1.0
+ * @version         1.0.1
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -18,11 +18,11 @@ class Seed_channel_model extends Seed_model {
 										'textarea',
 										'wygwam',
 										'playa',
-										'matrix',
-										'structure' );
+										'matrix', );
 
 	public $known_options = array(		'status',
-										'structure', );
+										'structure',
+										'category' );
 
 	public $overridden_fieldtypes = array( 'rte' => 'wygwam' );
 
@@ -146,8 +146,17 @@ class Seed_channel_model extends Seed_model {
 
 		foreach( $this->channel['fields'] as $field )
 		{
-			$plugin_list[] = $field['field_type'];
+			$field_type = $field['field_type'];
+
+			// This field may be being overridden 
+			if( array_key_exists( $field_type, $this->overridden_fieldtypes ) )
+			{
+				$field_type = $this->overridden_fieldtypes[ $field_type ];
+			}
+
+			$plugin_list[] = $field_type;
 		}
+
 
 		$plugin_list = array_unique( $plugin_list );
 

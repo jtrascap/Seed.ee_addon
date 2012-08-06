@@ -10,7 +10,7 @@ if ( ! class_exists('CI_model'))
  * Seed Base Model class
  *
  * @package         seed_ee_addon
- * @version         1.0
+ * @version         1.0.1
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -519,7 +519,7 @@ class Seed_model extends CI_Model {
 	public function get_options( $options_list )
 	{
 		$this->EE->load->helper(array('file'));
-		
+
 		$options = array();
 		
 		require_once SEED_OPTION_PLUGIN_PATH . 'seed.option.php';

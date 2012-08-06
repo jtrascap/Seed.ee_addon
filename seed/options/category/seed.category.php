@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Seed Option Status class
+ * Seed Option Category class
  *
  * @package         seed_ee_addon
  * @version         1.0.1
@@ -9,9 +9,9 @@
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
  */
-class Seed_option_status extends Seed_option
+class Seed_option_category extends Seed_option
 {
-	public $title = 'status';
+	public $title = 'category';
 
 	public $settings = array(
 		array(

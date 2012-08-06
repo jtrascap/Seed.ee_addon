@@ -4,7 +4,7 @@
  * Seed MCP File 
  *
  * @package         seed_ee_addon
- * @version         1.0
+ * @version         1.0.1
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -396,6 +396,75 @@ class Seed_mcp
 		$this->result['statuses'] = $statuses;
 
 
+
+		// Categories
+		$categories = array();
+
+		$channel_groups = $this->EE->db->select('channel_id, cat_group')
+							->from('channels')
+							->where('site_id','1')
+							->where('cat_group IS NOT NULL', null)
+							->get()
+							->result_array();
+
+		if( !empty( $channel_groups ) )
+		{
+			// There is at least one channel with some cat groups
+			$cat_groups = array();
+			$cat_groups_by_channel = array();
+
+			foreach( $channel_groups as $channel ) 
+			{
+				if( $channel['cat_group'] != '' ) 
+				{
+					$groups = explode( '|', $channel['cat_group'] );
+					$cat_groups_by_channel[ $channel['channel_id'] ] = $groups;
+
+					$cat_groups = array_merge( $cat_groups, $groups );
+				}				
+			}
+
+			// Now get the categories for these groups
+			$cat_groups_data = $this->EE->db->select('g.group_id, g.group_name, g.sort_order')
+								->from('category_groups g')
+								->where_in('g.group_id', $groups )
+								->get()
+								->result_array();
+
+
+
+			$this->EE->load->library('api');
+			$this->EE->api->instantiate('channel_categories');
+
+
+			foreach( $cat_groups_data as $group )
+			{
+				// Fetch the category tree
+				$this->EE->api_channel_categories->category_tree($group['group_id'], '', $group['sort_order']);
+
+				$groups[ $group['group_id'] ] = $this->EE->api_channel_categories->categories;
+
+			//	$categories['groups'][ $group['group_id'] ] = $group;
+			}
+
+
+			// Now drop them into their respective channels
+
+			foreach( $cat_groups_by_channel as $channel_id => $channel_group )
+			{
+
+				foreach( $channel_group as $subgroup ) 
+				{
+					$categories[ $channel_id ]['groups'][ $subgroup ] = $groups[ $subgroup ];
+				}
+
+			}
+
+		}
+
+		$this->result['categories'] = $categories;
+
+
 		// See if structure is installed and active for any channels
 		$has_structure = $this->EE->db->from('modules')
 									->where('module_name', 'Structure')
@@ -465,10 +534,29 @@ class Seed_mcp
 		// 		- statuses
 		//		- categories
 		
-		$this->_get_channel_statuses( $channel_id );
+		$this->_get_channel_statuses( $channel_id );		
+		$this->_get_channel_categories( $channel_id );
 
-		// TODO categories
 
+	}
+
+	private function _get_channel_categories( $channel_id ) 
+	{
+		// Do we have categories for this channel?
+		$channel_categories = array();
+
+		if( isset( $this->result['categories'][ $channel_id ] ) )
+		{
+			$channel_categories = $this->result['categories'][ $channel_id ];
+		}
+
+	
+		$categories['option_label'] 		= 'Categories';
+		$categories['option_type']			= 'category';
+		$categories['values']				= $channel_categories;
+		$categories['visible']				= ( count($channel_categories) > 0 ? TRUE : FALSE );
+
+		$this->data['channels'][ $channel_id ]['options'][] = $categories;
 	}
 
 	private function _get_channel_statuses( $channel_id ) 

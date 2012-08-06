@@ -4,7 +4,7 @@
  * Seed helper class
  *
  * @package         seed_ee_addon
- * @version         1.0
+ * @version         1.0.1
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
