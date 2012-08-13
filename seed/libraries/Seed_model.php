@@ -486,6 +486,7 @@ class Seed_model extends CI_Model {
 		$this->EE->load->helper(array('file'));
 
 		$options = array();
+		$this->EE->seed_options = new stdClass();
 		
 		require_once SEED_OPTION_PLUGIN_PATH . 'seed.option.php';
 	
