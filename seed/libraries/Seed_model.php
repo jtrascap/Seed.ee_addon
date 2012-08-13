@@ -417,7 +417,8 @@ class Seed_model extends CI_Model {
 		$this->EE->load->helper(array('file'));
 		
 		$plugins = array();
-		
+		$this->EE->seed_plugins = new stdClass();
+
 		require_once SEED_FIELD_PLUGIN_PATH . 'seed.fieldtype.php';
 	
 		foreach( $plugin_list as $type ) 
@@ -460,43 +461,7 @@ class Seed_model extends CI_Model {
 
 	public function get_plugin( $plugin_name )
 	{
-		$this->EE->load->helper(array('file'));
-		
-		$plugins = array();
-		
-		require_once SEED_FIELD_PLUGIN_PATH . 'seed.fieldtype.php';
-	
-		$paths[] = SEED_FIELD_PLUGIN_PATH . '/' . $plugin_name;
-
-		$found_plugins = array();
-
-		foreach ($paths as $i => $path)
-		{
-			if ( ! is_dir($path))
-			{
-				continue;
-			}
-			
-			foreach (get_filenames($path, TRUE) as $file)
-			{
-				$class = basename($file, EXT);
-
-				if (strpos($class, 'seed.') !== 0 || strpos($class, '~') !== FALSE)
-				{
-					continue;
-				}
-
-				$class = substr( $class, 5 );
-				
-				$plugin = $this->create_child( $class );
-
-				$this->EE->seed_plugins->$class = $plugin;
-
-				$plugins[ $class ] = get_object_vars($plugin);
-			}
-		}
-		
-		return $plugins;
+		return $this->get_plugins( array( $plugin_name ) );
 	}
 
 
