@@ -4,7 +4,7 @@
  * Seed MCP File 
  *
  * @package         seed_ee_addon
- * @version         1.0.1
+ * @version         1.0.2
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -400,7 +400,7 @@ class Seed_mcp
 		// Categories
 		$categories = array();
 
-		$channel_groups = $this->EE->db->select('channel_id, cat_group')
+	/*	$channel_groups = $this->EE->db->select('channel_id, cat_group')
 							->from('channels')
 							->where('site_id','1')
 							->where('cat_group IS NOT NULL', null)
@@ -452,7 +452,6 @@ class Seed_mcp
 
 			foreach( $cat_groups_by_channel as $channel_id => $channel_group )
 			{
-
 				foreach( $channel_group as $subgroup ) 
 				{
 					$categories[ $channel_id ]['groups'][ $subgroup ] = $groups[ $subgroup ];
@@ -461,7 +460,7 @@ class Seed_mcp
 			}
 
 		}
-
+*/
 		$this->result['categories'] = $categories;
 
 
@@ -553,8 +552,10 @@ class Seed_mcp
 	
 		$categories['option_label'] 		= 'Categories';
 		$categories['option_type']			= 'category';
-		$categories['values']				= $channel_categories;
-		$categories['visible']				= ( count($channel_categories) > 0 ? TRUE : FALSE );
+		$categories['values']				= $channel_categories;	
+
+		// Hide categories for now
+		$categories['visible']				= FALSE; //( count($channel_categories) > 0 ? TRUE : FALSE );
 
 		$this->data['channels'][ $channel_id ]['options'][] = $categories;
 	}

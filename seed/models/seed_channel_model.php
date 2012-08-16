@@ -4,7 +4,7 @@
  * Seed Channel Model class
  *
  * @package         seed_ee_addon
- * @version         1.0.1
+ * @version         1.0.2
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 
@@ -15,7 +15,7 @@ class Seed_channel_model extends Seed_model {
 	private $field_settings;
 
 	public $known_fieldtypes = array(	'text',
-										'textarea',
+										'textarea',										
 										'wygwam',
 										'playa',
 										'matrix', );
@@ -244,7 +244,7 @@ class Seed_channel_model extends Seed_model {
 					->from('channels c')
 					->join('channel_fields f', 'c.field_group = f.group_id', 'left')
 					->where('c.site_id', '1')
-					->where('c.channel_id', $channel_id)
+					//->where('c.channel_id', $channel_id)
 			       	->order_by('c.channel_title', 'asc')
 			       	->order_by('f.field_order', 'asc')
 					->get()
@@ -285,7 +285,7 @@ class Seed_channel_model extends Seed_model {
 		$this->EE->api->instantiate('channel_fields');
 
 
-		$data['author_id'] 			= 1;
+		$data['author_id'] 			= $this->EE->session->userdata('member_id');
 		$data['entry_date'] 		= $this->EE->localize->now;
 
 		$meta = array();
@@ -379,21 +379,24 @@ class Seed_channel_model extends Seed_model {
 
 		$settings = array();
 
+
+
+	
+		if( !isset( $this->EE->seed_plugins ) ) 
+		{
+			// Get the settings only if we need them
+			$this->channel = $this->_get_details( $channel_id );
+			$this->_get_field_plugins();
+
+			$this->EE->load->library('api');
+			$this->EE->api->instantiate('channel_entries');
+			$this->EE->api->instantiate('channel_fields');
+
+			$this->EE->api_channel_fields->setup_entry_settings($channel_id, array());
+		}
+
 		if( in_array( $type, $this->has_settings ) )
 		{
-			if( !isset( $this->EE->seed_plugins ) ) 
-			{
-				// Get the settings only if we need them
-				$this->channel = $this->_get_details( $channel_id );
-				$this->_get_field_plugins();
-
-				$this->EE->load->library('api');
-				$this->EE->api->instantiate('channel_entries');
-				$this->EE->api->instantiate('channel_fields');
-
-				$this->EE->api_channel_fields->setup_entry_settings($channel_id, array());
-			}
-
 			// Get the settings for this fieldtype
 			$settings = $this->EE->seed_plugins->$type->get_settings( $field_id );
 		}

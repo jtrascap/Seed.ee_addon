@@ -13,6 +13,7 @@ $lang = array(
 
 
 	// Errors
+	'seed_no_channels_to_populate'	=> 'There are no channels on this site to populate',
 	'seed_error_no_channel'			=> 'You must pass a channel to seed',
 	'seed_error_no_count'			=> 'You must pass a number of entries to seed',
 	'seed_error_count_not_positive'	=> 'Seed count needs to be a positive number',
