@@ -1,12 +1,22 @@
 
 
 <tr class="odd seed_option_<?=$channel_id?>_category">
+    <th scope="row" colspan="2">
+    	There are <?=count( $option['values']['groups'] )?> category groups. You can choose a range for selection for each group
+    </th>
+</tr>
+
+
+<tr class="odd seed_option_<?=$channel_id?>_category">
     <th scope="row">
-    	Possible Categories
+        Minimum Categories for the [ CATEGORY gROUP NAME 1 ]
     </th>
     <td>
+        There are 3 category groups
 
-    	<?php foreach( $option['values'][ 'groups' ] as $group ) : 
+        <?='<pre>'.print_R($option,1).'</pre>'?>
+
+         <!--<?php foreach( $option['values'][ 'groups' ] as $group ) : 
 
             $show_header = TRUE;
 
@@ -23,13 +33,10 @@
 
 
         <?php echo('<pre> - '.$channel_id.' - '.print_R($option,1).'</pre>') ?>
-		
-		<!--
--->
-
+        
         Populate categories in the [ one ] group<br/>
-        Populate categories in the [ two ] group
+        Populate categories in the [ two ] group -->
 
-    	
+        
     </td>
 </tr>

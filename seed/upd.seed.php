@@ -118,7 +118,7 @@ class Seed_upd {
 		// Same Version - nothing to do
 		// --------------------------------------
 
-		if( $current <= '1.0.3') 
+		if( version_compare( $current, '1.0.3') ) 
 		{
 			// Remove the old bad record that was inserted in 0.9.1
 			// in the exp_modules table
