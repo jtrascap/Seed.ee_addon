@@ -20,7 +20,8 @@ if ( ! defined('SEED_NAME'))
 
 	define('SEED_FIELD_PLUGIN_PATH', dirname(__FILE__).'/fieldtypes/');
 	define('SEED_OPTION_PLUGIN_PATH', dirname(__FILE__).'/options/');
-	define('SEED_TEXT_SRC', dirname(__FILE__).'/seed/english/seed.kant.txt');
+	define('SEED_TEXT_SRC', dirname(__FILE__).'/seed/english/seed.{base}.txt');
+
 }
 
 $config['name']    = SEED_NAME;

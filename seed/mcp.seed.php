@@ -164,6 +164,7 @@ class Seed_mcp
 		// Check we've got a passed channel_id and seed count
 		$channel_id = ee()->input->post('seed_channel');
 		$seed_count = ee()->input->post('seed_count');
+		$seed_text_base = ee()->input->post('seed_text_base');
 
 		$errors = array();
 

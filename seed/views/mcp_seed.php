@@ -59,10 +59,30 @@
 					</td>
 				</tr>
 
+				<tr class="<?=seed_row()?>" style="width:30%">
+					<td scope="row">
+						<label for="seed_text_base">Text Generation Base</label>
+					</td>
+					<td>
+						<select style="width:30%" id="seed_text_base" name="seed_text_base">
+							<option value="lorem">Lorem Ipsum</option>
+							<option value="kant">Bacon Ipsum</option>
+							<option value="cupcake">Cupcake Ipsum</option>
+							<option value="bluth">Bluth Ipsum</option>
+							<option value="space">Space Ipsum</option>
+							<option value="zombie">Zombie Ipsum</option>
+						</select>
+					</td>
+				</tr>
+
+
 
 			</tbody>
 		</table>
+
 	</div>
+
+
 
 	
 	<?php foreach( $channels as $channel_id => $channel ) : ?>	

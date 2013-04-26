@@ -14,6 +14,15 @@ class Seed_channel_model extends Seed_model {
 	private $errors;
 	private $field_settings;
 
+	public $default_text_base = 'lorem';
+	public $known_text_bases = array( 	'lorem',
+										'kant',
+										'cupcake',
+										'bacon',
+										'bluth',
+										'space',
+										'zombie' );
+
 	public $known_fieldtypes = array(	'text',
 										'textarea',										
 										'wygwam',
@@ -82,6 +91,7 @@ class Seed_channel_model extends Seed_model {
 		// Get the basics about this
 		$channel_id = ee()->input->post('seed_channel');
 		$seed_count = ee()->input->post('seed_count');
+		$seed_text_base = ee()->input->post('seed_text_base');
 
 		if( !is_numeric( $seed_count ) ) $this->errors( lang('seed_count_not_numeric') );
 
@@ -89,6 +99,8 @@ class Seed_channel_model extends Seed_model {
 		$this->channel = $this->_get_details( $channel_id );
 		$this->_get_field_plugins();
 
+		// Get the seed text base, or default to lorem
+		$seed_text_base = $this->_get_text_base($seed_text_base);
 
 		// Check we can continue
 		if( !empty( $this->errors ) ) return $this->errors();
@@ -129,6 +141,7 @@ class Seed_channel_model extends Seed_model {
 		$seed['seed_count']			= $seed_count;
 		$seed['field_options'] 		= $this->field_options;
 		$seed['channel_options'] 	= $this->channel_options;
+		$seed['seed_text_base']		= $seed_text_base;
 		
 		$results = $this->_generate( $seed );
 
@@ -136,6 +149,15 @@ class Seed_channel_model extends Seed_model {
 
 		return TRUE;
 	}
+
+
+	private function _get_text_base($text_base)
+	{	
+		if( in_array($text_base, $this->known_text_bases) ) return $text_base;
+
+		return $this->default_text_base;
+	}
+
 
 	private function _get_field_plugins()
 	{
@@ -289,6 +311,9 @@ class Seed_channel_model extends Seed_model {
 		$data['entry_date'] 		= ee()->localize->now;
 
 		$meta = array();
+
+		// Setup the generator class with our chosen textbase
+		ee()->seed_generator_model->set_base($seed['seed_text_base']);
 
 		ee()->api_channel_fields->setup_entry_settings($seed['channel_id'], array());
 

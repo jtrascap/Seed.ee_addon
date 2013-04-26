@@ -14,6 +14,8 @@ class Seed_generator_model extends Seed_model {
     
     private static $seed_text = '';
     private static $table = array();
+    private static $table_base = '';
+    private static $text_base = 'lorem';
     private $order = 4;
 
     // --------------------------------------------------------------------
@@ -59,11 +61,23 @@ class Seed_generator_model extends Seed_model {
     {
         ee()->load->helper('file');
 
-        $this->seed_text = read_file( SEED_TEXT_SRC );
+        $base = str_replace('{base}', static::$text_base, SEED_TEXT_SRC);
 
-        if( empty( $this->table ) ) $this->table = $this->_generate_table( $this->order );
+        $this->seed_text = read_file( $base );
+
+        if( empty( $this->table ) OR $this->table_base != $base )
+        {
+            $this->table_base = $base;
+            $this->table = $this->_generate_table( $this->order );
+        }
 
     }
+
+    public function set_base( $base = 'lorem')
+    {
+        static::$text_base = $base;
+    }
+
 
     public function generate_words( $max_length, $length )
     {
