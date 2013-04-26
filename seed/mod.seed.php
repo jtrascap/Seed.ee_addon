@@ -8,7 +8,7 @@ include PATH_THIRD.'seed/config'.EXT;
  * Seed Module Class 
  *
  * @package         seed_ee_addon
- * @version         1.0.2
+ * @version         1.1.0
  * @author          Joel Bradbury ~ <joel@squarebit.co.uk>
  * @link            http://squarebit.co.uk/seed
  * @copyright       Copyright (c) 2012, Joel 

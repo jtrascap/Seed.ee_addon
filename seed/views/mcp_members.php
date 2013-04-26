@@ -6,7 +6,5 @@
 		<div class="alert"><a href="#">Seed Entries &#8594;</a></div>
 	</div>
 
-
-
 </div>
 
