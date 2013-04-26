@@ -28,11 +28,12 @@ class Seed {
 	 */
 	public function __construct()
 	{
-		// Set global object
-		$this->EE =& get_instance();
+		if ( ! function_exists('ee') ) {
+			function ee() {	return get_instance(); }
+		}
 
 		// Load base model
-		$this->EE->load->library('Seed_model');
+		ee()->load->library('Seed_model');
 
 		// Load other models
 		Seed_model::load_models();

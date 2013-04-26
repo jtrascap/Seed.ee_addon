@@ -57,7 +57,7 @@ class Seed_generator_model extends Seed_model {
 
     public function initialize()
     {
-        $this->EE->load->helper('file');
+        ee()->load->helper('file');
 
         $this->seed_text = read_file( SEED_TEXT_SRC );
 

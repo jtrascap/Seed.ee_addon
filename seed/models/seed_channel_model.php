@@ -80,8 +80,8 @@ class Seed_channel_model extends Seed_model {
 		$this->errors = array();
 
 		// Get the basics about this
-		$channel_id = $this->EE->input->post('seed_channel');
-		$seed_count = $this->EE->input->post('seed_count');
+		$channel_id = ee()->input->post('seed_channel');
+		$seed_count = ee()->input->post('seed_count');
 
 		if( !is_numeric( $seed_count ) ) $this->errors( lang('seed_count_not_numeric') );
 
@@ -98,7 +98,7 @@ class Seed_channel_model extends Seed_model {
 		foreach( $this->known_options as $option )
 		{
 			$input_base = 'seed_option_'.$channel_id.'_'.$option;
-			$value = $this->EE->input->post( $input_base );
+			$value = ee()->input->post( $input_base );
 
 			if( $value != '' AND !empty( $value ) )	$this->channel_options[ $option ] = $value;
 		}
@@ -109,7 +109,7 @@ class Seed_channel_model extends Seed_model {
 		foreach( $this->channel['fields'] as $field_id => $field ) 
 		{
 			$input_base = 'seed_field_'.$channel_id.'_';
-			$populate = $this->EE->input->post( $input_base . $field_id );
+			$populate = ee()->input->post( $input_base . $field_id );
 
 
 			if( $populate == 'always' OR $populate == 'sparse' )
@@ -208,7 +208,7 @@ class Seed_channel_model extends Seed_model {
 		{
 			// Build the field_name
 			$passed_input_name = $input_base . $field_id . '_' . $setting['name'];
-			$value = $this->EE->input->post( $passed_input_name );
+			$value = ee()->input->post( $passed_input_name );
 
 			if( $setting['required'] === TRUE AND $value == '' )
 			{
@@ -221,7 +221,7 @@ class Seed_channel_model extends Seed_model {
 		}
 
 		// Pass this over to the seed fieldtype for additional handling if requried
-		$extra = $this->EE->seed_plugins->$field['field_type']->handle_post( $this->plugins, $field, $input_base );
+		$extra = ee()->seed_plugins->$field['field_type']->handle_post( $this->plugins, $field, $input_base );
 
 		$options['extra'] = $extra;
 		$options['field_type'] = $field['field_type'];
@@ -240,7 +240,7 @@ class Seed_channel_model extends Seed_model {
 		// Get channels and searchable fields
 		// --------------------------------------
 
-		$results  = $this->EE->db->select('c.channel_id, c.channel_title, f.*')
+		$results  = ee()->db->select('c.channel_id, c.channel_title, f.*')
 					->from('channels c')
 					->join('channel_fields f', 'c.field_group = f.group_id', 'left')
 					->where('c.site_id', '1')
@@ -277,20 +277,20 @@ class Seed_channel_model extends Seed_model {
 	{
 		if( empty( $seed ) ) return;
 
-		//$this->EE->load->library('api/Api_channel_entries');
+		//ee()->load->library('api/Api_channel_entries');
 		// We have the seed. Go a head and generate
 
-		$this->EE->load->library('api');
-		$this->EE->api->instantiate('channel_entries');
-		$this->EE->api->instantiate('channel_fields');
+		ee()->load->library('api');
+		ee()->api->instantiate('channel_entries');
+		ee()->api->instantiate('channel_fields');
 
 
-		$data['author_id'] 			= $this->EE->session->userdata('member_id');
-		$data['entry_date'] 		= $this->EE->localize->now;
+		$data['author_id'] 			= ee()->session->userdata('member_id');
+		$data['entry_date'] 		= ee()->localize->now;
 
 		$meta = array();
 
-		$this->EE->api_channel_fields->setup_entry_settings($seed['channel_id'], array());
+		ee()->api_channel_fields->setup_entry_settings($seed['channel_id'], array());
 
 		// Loop this for as many times as we need to create
 		// as many entries from the input
@@ -298,7 +298,7 @@ class Seed_channel_model extends Seed_model {
 		{
 			foreach( $seed['channel_options'] as $option_name => $option_value )
 			{	
-				$value = $this->EE->seed_options->$option_name->generate( $option_value );
+				$value = ee()->seed_options->$option_name->generate( $option_value );
 
 				if( $value !== FALSE ) $data[ $option_name ] = $value;
 			}
@@ -320,23 +320,23 @@ class Seed_channel_model extends Seed_model {
 				$field['channel_id'] = $seed['channel_id'];
 
 				// Pass the generation over to the specific field type
-				$data[ $field_name ] = $this->EE->seed_plugins->$field['field_type']->generate( $field );
+				$data[ $field_name ] = ee()->seed_plugins->$field['field_type']->generate( $field );
 			}
 
 
-			if( $this->EE->api_channel_entries->submit_new_entry( $seed['channel_id'], $data ) === FALSE )
+			if( ee()->api_channel_entries->submit_new_entry( $seed['channel_id'], $data ) === FALSE )
 			{
-				$this->errors = $this->EE->api_channel_entries->get_errors();
+				$this->errors = ee()->api_channel_entries->get_errors();
 				return FALSE;
 			}
 
-			$entry_id = $this->EE->api_channel_entries->entry_id;
+			$entry_id = ee()->api_channel_entries->entry_id;
 
 
 			// Now wrap up an post save data we need
 			foreach( $seed['channel_options'] as $option_name => $option_value )
 			{				
-				$this->EE->seed_options->$option_name->post_save( $entry_id, $data, $option_value );
+				ee()->seed_options->$option_name->post_save( $entry_id, $data, $option_value );
 			}
 
 			foreach( $seed['field_options'] as $field_id => $field ) 
@@ -346,7 +346,7 @@ class Seed_channel_model extends Seed_model {
 				$field['field_id'] = $field_id;
 				$field['channel_id'] = $seed['channel_id'];
 
-				$this->EE->seed_plugins->$field['field_type']->post_save( $entry_id, $data, $field );				
+				ee()->seed_plugins->$field['field_type']->post_save( $entry_id, $data, $field );				
 			}
 
 		}
@@ -382,23 +382,23 @@ class Seed_channel_model extends Seed_model {
 
 
 	
-		if( !isset( $this->EE->seed_plugins ) ) 
+		if( !isset( ee()->seed_plugins ) ) 
 		{
 			// Get the settings only if we need them
 			$this->channel = $this->_get_details( $channel_id );
 			$this->_get_field_plugins();
 
-			$this->EE->load->library('api');
-			$this->EE->api->instantiate('channel_entries');
-			$this->EE->api->instantiate('channel_fields');
+			ee()->load->library('api');
+			ee()->api->instantiate('channel_entries');
+			ee()->api->instantiate('channel_fields');
 
-			$this->EE->api_channel_fields->setup_entry_settings($channel_id, array());
+			ee()->api_channel_fields->setup_entry_settings($channel_id, array());
 		}
 
 		if( in_array( $type, $this->has_settings ) )
 		{
 			// Get the settings for this fieldtype
-			$settings = $this->EE->seed_plugins->$type->get_settings( $field_id );
+			$settings = ee()->seed_plugins->$type->get_settings( $field_id );
 		}
 
 		$data = array( 'channel_id' 	=> $channel_id,
@@ -410,7 +410,7 @@ class Seed_channel_model extends Seed_model {
 						'is_cell'		=> $is_cell,
 						'cell'			=> $cell );
 
-		$view = $this->EE->load->view( '../fieldtypes/'.$type.'/options', $data, TRUE);
+		$view = ee()->load->view( '../fieldtypes/'.$type.'/options', $data, TRUE);
 		
 		return $view;
 
@@ -426,7 +426,7 @@ class Seed_channel_model extends Seed_model {
 		$data = array( 'channel_id' 	=> $channel_id,
 						'option' 		=> $option,);
 
-		$view = $this->EE->load->view( '../options/'.$type.'/view', $data, TRUE);
+		$view = ee()->load->view( '../options/'.$type.'/view', $data, TRUE);
 		
 		return $view;
 

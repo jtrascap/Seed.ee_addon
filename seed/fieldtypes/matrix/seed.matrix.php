@@ -39,10 +39,10 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 		$return = array();
 
 		if( $field_id == 0 ) return $return;
-		if( !isset( $this->EE->api_channel_fields->settings[ $field_id ] ) ) return $return;
+		if( !isset( ee()->api_channel_fields->settings[ $field_id ] ) ) return $return;
 
 
-		$settings = $this->EE->api_channel_fields->settings[ $field_id ]['field_settings'];
+		$settings = ee()->api_channel_fields->settings[ $field_id ]['field_settings'];
 		$settings = unserialize( base64_decode( $settings ) );
 
 		if( !is_array( $settings ) ) return array();
@@ -58,7 +58,7 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 
 		$settings = unserialize( base64_decode( $field['field_settings'] ) );
 
-		$cells = $this->EE->seed_plugins->$field['field_type']->get_cell_types( $settings );
+		$cells = ee()->seed_plugins->$field['field_type']->get_cell_types( $settings );
 
 		//die('<pre>'.print_R($field,1).print_R($cells,1));
 		// Loop over the cells and get any passed values
@@ -72,7 +72,7 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 			{
 				// Build the field_name
 				$passed_input_name = $input_base . $base . '_' . $setting['name'];
-				$value = $this->EE->input->post( $passed_input_name );
+				$value = ee()->input->post( $passed_input_name );
 
 				if( $setting['required'] === TRUE AND $value == '' )
 				{
@@ -96,13 +96,13 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 	{
 		// We need to query the matrix_cols table to get the cell data
 
-		$cells = $this->EE->db->where_in('col_id', $field['col_ids'] )
+		$cells = ee()->db->where_in('col_id', $field['col_ids'] )
 								->order_by('col_order', 'asc')
 								->get('matrix_cols')
 								->result_array();
 
 		// We need to cleanup any cell types and revert unknowns and overridded items
-		$this->EE->seed_channel_model = new Seed_channel_model();
+		ee()->seed_channel_model = new Seed_channel_model();
 
 		foreach( $cells as $key => $cell )
 		{
@@ -116,12 +116,12 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 
 	private function _overload_cells( $type )
 	{
-		if( array_key_exists( $type, $this->EE->seed_channel_model->overridden_fieldtypes ) )
+		if( array_key_exists( $type, ee()->seed_channel_model->overridden_fieldtypes ) )
 		{
-			$type = $this->EE->seed_channel_model->overridden_fieldtypes[ $type ];
+			$type = ee()->seed_channel_model->overridden_fieldtypes[ $type ];
 		}
 
-		if( !in_array( $type, $this->EE->seed_channel_model->known_fieldtypes ) )
+		if( !in_array( $type, ee()->seed_channel_model->known_fieldtypes ) )
 		{
 			$type = 'text';
 		}
@@ -174,7 +174,7 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 				$cell_extra['field_id'] = $field['field_id'];
 				$cell_extra['cell_id'] = $cell_id;
 
-				$cell_data = $this->EE->seed_plugins->$type->generate( $cell_extra	 );
+				$cell_data = ee()->seed_plugins->$type->generate( $cell_extra	 );
 
 				$row[ $cell_id ] = $cell_data;
 			}
@@ -203,7 +203,7 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 		{
 			$data = array();
 			
-			$data['site_id'] = $this->EE->config->item('site_id');
+			$data['site_id'] = ee()->config->item('site_id');
 			$data['field_id'] = $field['field_id'];
 			$data['entry_id'] = $entry_id;
 
@@ -227,13 +227,13 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 				$keywords = $this->_save_rels($selections, $data);
 
 				// save the keywords in exp_matrix_data
-				$this->EE->db->where('row_id', $this->settings['row_id'])
+				ee()->db->where('row_id', $this->settings['row_id'])
 		             ->update('matrix_data', array($this->settings['col_name'] => $keywords));*/
 
 			}
 
 			// Insert to matrix_Data
-			$this->EE->db->insert('matrix_data', $data);
+			ee()->db->insert('matrix_data', $data);
 		}
 
 		return;
@@ -257,7 +257,7 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 
 			$child_titles = array();
 
-			$query = $this->EE->db->select('entry_id, title, url_title')
+			$query = ee()->db->select('entry_id, title, url_title')
 			                      ->where_in('entry_id', $selections)
 			                      ->get('channel_titles')
 			                      ->result();
@@ -283,7 +283,7 @@ class Seed_fieldtype_matrix extends Seed_fieldtype
 				    . '['.$child_entry_id.'] '.str_replace('\'', '', $child_titles[$child_entry_id][0]).' - '.$child_titles[$child_entry_id][1];
 			}
 
-			$this->EE->db->insert_batch('playa_relationships', $batch_rel_data);
+			ee()->db->insert_batch('playa_relationships', $batch_rel_data);
 		}
 
 		return $r;

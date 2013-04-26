@@ -52,7 +52,7 @@ class Seed_fieldtype_textarea extends Seed_fieldtype
 
 		$length = rand( $field['from'], $field['to'] );
 	
-		$ret = $this->EE->seed_generator_model->generate_paragraphs( $length );
+		$ret = ee()->seed_generator_model->generate_paragraphs( $length );
 
 		return $ret;
 	}

@@ -19,33 +19,30 @@ class Seed_mcp
 
 	function __construct()
 	{
-		// Make a local reference to the ExpressionEngine super object
-		$this->EE =& get_instance();
+		if ( ! function_exists('ee') ) {
+			function ee() {	return get_instance(); }
+		}
+
 		$this->module_name = strtolower(str_replace('_mcp', '', get_class($this)));
 		$this->base = str_replace( '&amp;D=', '&D=', BASE.'&C=addons_modules&M=show_module_cp&module=' . $this->module_name );
 
 
 		$this->data['base_url'] = $this->base;
-		$this->controls[]  = $this->base.AMP.'method=settings';
-
-
+	
 		$controls = array();
-
-		$this->EE->cp->set_right_nav( $controls );
-
+		ee()->cp->set_right_nav( $controls );
 
 		// Load helper
-		$this->EE->load->helper('Seed');
+		ee()->load->helper('Seed');
 		
 		// Load Seed base model
-		$this->EE->load->library('Seed_model');
+		ee()->load->library('Seed_model');
 
 		// Load other models  
 		Seed_model::load_models();		
 	}
 	// --------------------------------------------------------------------
 
-	
 	// --------------------------------------------------------------------
 
 	/**
@@ -62,17 +59,76 @@ class Seed_mcp
 		// Load some libraries
 		// --------------------------------------
 
-		$this->EE->load->library('javascript');
+		ee()->load->library('javascript');
 
 		// --------------------------------------
 		// Load assets
 		// --------------------------------------
 		$this->_add_morphine();
-		$this->EE->cp->load_package_css('seed'.$this->nocache);
-		//$this->EE->cp->load_package_js('seed'.$this->nocache);
+		ee()->cp->load_package_css('seed'.$this->nocache);
+		//ee()->cp->load_package_js('seed'.$this->nocache);
+
+		ee()->view->cp_page_title = lang('seed_module_name');
 
 
-		$this->EE->cp->set_variable('cp_page_title', lang('seed_new_seed'));
+		$this->data['seed_entries_uri'] = $this->base . '&method=seed_entries';
+		$this->data['seed_members_uri'] = $this->base . '&method=seed_members';
+
+		return ee()->load->view('mcp_index', $this->data, TRUE);
+	
+	}
+
+
+	function seed_members( $type = 'new', $message = array() )
+	{
+
+		// --------------------------------------
+		// Load some libraries
+		// --------------------------------------
+
+		ee()->load->library('javascript');
+
+		// --------------------------------------
+		// Load assets
+		// --------------------------------------
+		$this->_add_morphine();
+		ee()->cp->load_package_css('seed'.$this->nocache);
+		//ee()->cp->load_package_js('seed'.$this->nocache);
+
+		ee()->view->cp_page_title = lang('seed_new_member_seed');
+		ee()->cp->set_breadcrumb($this->base, lang('seed_module_name'));
+
+
+		return ee()->load->view('mcp_members', $this->data, TRUE);
+	}
+	// --------------------------------------------------------------------
+
+	/**
+	 * New Seed page
+	 *
+	 * @access      public
+	 * @return      string
+	 */
+
+	function seed_entries( $type = 'new', $message = array() )
+	{	
+
+		// --------------------------------------
+		// Load some libraries
+		// --------------------------------------
+
+		ee()->load->library('javascript');
+
+		// --------------------------------------
+		// Load assets
+		// --------------------------------------
+		$this->_add_morphine();
+		ee()->cp->load_package_css('seed'.$this->nocache);
+		//ee()->cp->load_package_js('seed'.$this->nocache);
+
+
+		ee()->view->cp_page_title = lang('seed_new_seed');
+		ee()->cp->set_breadcrumb($this->base, lang('seed_module_name'));
 
 		// Get the channel list
 		$this->data['channels'] = array();
@@ -91,7 +147,7 @@ class Seed_mcp
 		
 		$this->data[ 'type' ] = $type;
 
-		return $this->EE->load->view('mcp_seed', $this->data, TRUE);
+		return ee()->load->view('mcp_seed', $this->data, TRUE);
 	
 	}
 
@@ -106,8 +162,8 @@ class Seed_mcp
 	function start_seed()
 	{
 		// Check we've got a passed channel_id and seed count
-		$channel_id = $this->EE->input->post('seed_channel');
-		$seed_count = $this->EE->input->post('seed_count');
+		$channel_id = ee()->input->post('seed_channel');
+		$seed_count = ee()->input->post('seed_count');
 
 		$errors = array();
 
@@ -122,7 +178,7 @@ class Seed_mcp
 		}
 		if( !empty( $errors ) ) 
 		{
-			return $this->index( 'error', $errors );
+			return $this->seed_entries( 'error', $errors );
 		}
 
 		if( $seed_count <= 0 ) 
@@ -132,20 +188,20 @@ class Seed_mcp
 
 		if( !empty( $errors ) ) 
 		{
-			return $this->index( 'error', $errors );
+			return $this->seed_entries( 'error', $errors );
 		}
 
 		// Basic checks in place. Throw this over to the seed model for the actual grunt work
-		$return = $this->EE->seed_channel_model->seed();
+		$return = ee()->seed_channel_model->seed();
 
 		if( is_array( $return ) )
 		{
-			return $this->index( 'error', $return );
+			return $this->seed_entries( 'error', $return );
 		}
 
 		// Get the basic details for the channel
 
-		$channel  = $this->EE->db->select('c.channel_id, c.channel_title')
+		$channel  = ee()->db->select('c.channel_id, c.channel_title')
 					->from('channels c')
 					->where('c.channel_id', $channel_id)
 					->get()
@@ -160,7 +216,7 @@ class Seed_mcp
 			 				str_replace( '&amp;D=', '&D=', BASE.'&C=content_edit&channel_id='.$channel_id ) ),
 			 		lang('seed_success_message'));
 
-		return $this->index( 'success', $ret );
+		return $this->seed_entries( 'success', $ret );
 
 	}
 	// --------------------------------------------------------------------
@@ -177,14 +233,14 @@ class Seed_mcp
 		// Load some libraries
 		// --------------------------------------
 
-		$this->EE->load->library('javascript');
+		ee()->load->library('javascript');
 
-		$this->EE->cp->set_variable('cp_page_title', lang('settings'));
-		$this->EE->cp->set_breadcrumb($this->base, lang('seed_module_name'));
+		ee()->view->cp_page_title = lang('settings');
+		ee()->cp->set_breadcrumb($this->base, lang('seed_module_name'));
 
 		$this->cached_vars['form_post_url'] = $this->base . '&method=save_settings';
 
-		return $this->EE->load->view('settings', $this->cached_vars, TRUE);
+		return ee()->load->view('settings', $this->cached_vars, TRUE);
 	}
 
 
@@ -195,21 +251,21 @@ class Seed_mcp
 	{
 		$data = array();
 
-		foreach( $this->EE->seed_example_model->attributes() as $attribute )
+		foreach( ee()->seed_example_model->attributes() as $attribute )
 		{
-			if( $this->EE->input->get_post( $attribute ) != '' )
+			if( ee()->input->get_post( $attribute ) != '' )
 			{
-				$data[ $attribute ] = $this->EE->input->get_post( $attribute );
+				$data[ $attribute ] = ee()->input->get_post( $attribute );
 			}
 		}
 
-		$this->EE->seed_example_model->insert( $data );
+		ee()->seed_example_model->insert( $data );
 
         // ----------------------------------
         //  Redirect to Settings page with Message
         // ----------------------------------
         
-        $this->EE->functions->redirect($this->base . '&method=settings&msg=preferences_updated');
+        ee()->functions->redirect($this->base . '&method=settings&msg=preferences_updated');
         exit;
 
 	}
@@ -217,7 +273,7 @@ class Seed_mcp
 
 	private function _add_morphine()
 	{
-		$theme_folder_url = $this->EE->config->item('theme_folder_url');
+		$theme_folder_url = ee()->config->item('theme_folder_url');
 
 		if (substr($theme_folder_url, -1) != '/') {
 			$theme_folder_url .= '/';
@@ -225,20 +281,20 @@ class Seed_mcp
 
 		$theme_folder_url .= "third_party/seed/";
 
-		$this->EE->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.$theme_folder_url.'styles/screen.css" />');
+		ee()->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.$theme_folder_url.'styles/screen.css" />');
 
-		$this->EE->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'scripts/compressed.js"></script>');
-		$this->EE->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'seed.js"></script>');
+		ee()->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'scripts/compressed.js"></script>');
+		ee()->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'seed.js"></script>');
 
 
 		// Add datepicker
 
 
-		$date_fmt = $this->EE->session->userdata('time_format');
-		$date_fmt = $date_fmt ? $date_fmt : $this->EE->config->item('time_format');
+		$date_fmt = ee()->session->userdata('time_format');
+		$date_fmt = $date_fmt ? $date_fmt : ee()->config->item('time_format');
 
-		$this->EE->cp->add_to_head('<style type="text/css">.hasDatepicker{background:#fff url('.$this->EE->config->item('theme_folder_url').'cp_themes/default/images/calendar_bg.gif) no-repeat 98% 2px;background-repeat:no-repeat;background-position:99%;}</style>');
-		$this->EE->cp->add_to_head( trim('
+		ee()->cp->add_to_head('<style type="text/css">.hasDatepicker{background:#fff url('.ee()->config->item('theme_folder_url').'cp_themes/default/images/calendar_bg.gif) no-repeat 98% 2px;background-repeat:no-repeat;background-position:99%;}</style>');
+		ee()->cp->add_to_head( trim('
 			<script type="text/javascript">
 				$.createDatepickerTime=function(){
 					date = new Date();
@@ -270,16 +326,16 @@ class Seed_mcp
 
 
 		// Set up date js
-		$this->EE->javascript->output('
-			$("#entry_date").datepicker({dateFormat: $.datepicker.W3C + date_obj_time, defaultDate: new Date('.( $this->EE->localize->set_localized_time( $this->EE->localize->now * 1000).')});
-		') );
+	/*	ee()->javascript->output('
+			$("#entry_date").datepicker({dateFormat: $.datepicker.W3C + date_obj_time, defaultDate: new Date('.( ee()->localize->set_localized_time( ee()->localize->now * 1000).')});
+		') );*/
 
 
-		$this->EE->cp->add_js_script(array(
+		ee()->cp->add_js_script(array(
 			'ui'		=> 'datepicker'
 		));
 
-		$this->EE->javascript->compile();
+		ee()->javascript->compile();
 		
 
 	}
@@ -292,7 +348,7 @@ class Seed_mcp
 		// Get channels and searchable fields
 		// --------------------------------------
 
-		$results  = $this->EE->db->select('c.channel_id, c.channel_title, f.*')
+		$results  = ee()->db->select('c.channel_id, c.channel_title, f.*')
 					->from('channels c')
 					->join('channel_fields f', 'c.field_group = f.group_id', 'left')
 					->where('c.site_id', '1')
@@ -317,14 +373,14 @@ class Seed_mcp
 
 			if( $row['field_type'] == 'matrix' )
 			{
-				$this->EE->seed_channel_model->get_plugin( 'matrix' );
+				ee()->seed_channel_model->get_plugin( 'matrix' );
 				// Decode the settings
 				$settings = unserialize( base64_decode( $row['field_settings'] ) );
 
-				$row['cells'] = $this->EE->seed_plugins->$row['field_type']->get_cell_types( $settings );
+				$row['cells'] = ee()->seed_plugins->$row['field_type']->get_cell_types( $settings );
 
 				// Now unset that plugin so we're clean for later
-				unset( $this->EE->seed_plugins );
+				unset( ee()->seed_plugins );
 			}
 
 			// Add custom fields to this channel
@@ -386,7 +442,7 @@ class Seed_mcp
 		// Get statuses, categories for all channels
 
 		// Statuses
-		$statuses = $this->EE->db->select('s.*, c.channel_id')
+		$statuses = ee()->db->select('s.*, c.channel_id')
 					->from('statuses s')
 					->join('channels c', 's.group_id = c.status_group', 'left')
 					->where('s.site_id', '1')
@@ -400,7 +456,7 @@ class Seed_mcp
 		// Categories
 		$categories = array();
 
-	/*	$channel_groups = $this->EE->db->select('channel_id, cat_group')
+	/*	$channel_groups = ee()->db->select('channel_id, cat_group')
 							->from('channels')
 							->where('site_id','1')
 							->where('cat_group IS NOT NULL', null)
@@ -425,7 +481,7 @@ class Seed_mcp
 			}
 
 			// Now get the categories for these groups
-			$cat_groups_data = $this->EE->db->select('g.group_id, g.group_name, g.sort_order')
+			$cat_groups_data = ee()->db->select('g.group_id, g.group_name, g.sort_order')
 								->from('category_groups g')
 								->where_in('g.group_id', $groups )
 								->get()
@@ -433,16 +489,16 @@ class Seed_mcp
 
 
 
-			$this->EE->load->library('api');
-			$this->EE->api->instantiate('channel_categories');
+			ee()->load->library('api');
+			ee()->api->instantiate('channel_categories');
 
 
 			foreach( $cat_groups_data as $group )
 			{
 				// Fetch the category tree
-				$this->EE->api_channel_categories->category_tree($group['group_id'], '', $group['sort_order']);
+				ee()->api_channel_categories->category_tree($group['group_id'], '', $group['sort_order']);
 
-				$groups[ $group['group_id'] ] = $this->EE->api_channel_categories->categories;
+				$groups[ $group['group_id'] ] = ee()->api_channel_categories->categories;
 
 			//	$categories['groups'][ $group['group_id'] ] = $group;
 			}
@@ -465,27 +521,27 @@ class Seed_mcp
 
 
 		// See if structure is installed and active for any channels
-		$has_structure = $this->EE->db->from('modules')
+		$has_structure = ee()->db->from('modules')
 									->where('module_name', 'Structure')
 									->get()
 									->row_array();
 		if( !empty( $has_structure ) ) 
 		{
 			// Get structure channels
-			$structure = $this->EE->db->from('structure_channels')
+			$structure = ee()->db->from('structure_channels')
 										->where('type !=','unmanaged')
 										->get()
 										->result_array();
 			$this->result['structure'] = $structure;
 
 			// Get the site pages for display
-			$pages = $this->EE->db->select('site_pages')
+			$pages = ee()->db->select('site_pages')
 									->from('sites')
 									->where('site_id', '1')
 									->get()
 									->row_array();
 
-			$structure_data = $this->EE->db->select('entry_id')
+			$structure_data = ee()->db->select('entry_id')
 									->from('structure')
 									->where('parent_id', '0')
 									->order_by('lft', 'asc')
@@ -594,7 +650,7 @@ class Seed_mcp
 
 		$entry_date['option_label'] 	= 'Start Date';
 		$entry_date['option_type'] 		= 'entry_date';
-		$entry_date['inital_value']		= $this->EE->localize->now;
+		$entry_date['inital_value']		= ee()->localize->now;
 		$entry_date['visible']			= TRUE;
 		$options[] = $entry_date;
 

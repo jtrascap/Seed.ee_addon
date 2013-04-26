@@ -46,8 +46,9 @@ class Seed_model extends CI_Model {
 		// Call parent constructor
 		parent::__construct();
 
-		// Set global object
-		$this->EE =& get_instance();
+		if ( ! function_exists('ee') ) {
+			function ee() {	return get_instance(); }
+		}
 	}
 
 	
@@ -65,7 +66,7 @@ class Seed_model extends CI_Model {
 	protected function initialize($table, $pk, $attributes)
 	{
 		// Check table prefix
-		$prefix = $this->EE->db->dbprefix;
+		$prefix = ee()->db->dbprefix;
 
 		// Add prefix to table name if not there
 		if (substr($table, 0, strlen($prefix)) != $prefix)
@@ -167,7 +168,7 @@ class Seed_model extends CI_Model {
 	{
 		if ($attr === FALSE) $attr = $this->_pk;
 
-		return $this->EE->db->where($attr, $id)->get($this->_table)->row_array();
+		return ee()->db->where($attr, $id)->get($this->_table)->row_array();
 	}
 
 	// --------------------------------------------------------------------
@@ -180,7 +181,7 @@ class Seed_model extends CI_Model {
 	 */
 	public function get_all()
 	{
-		return $this->EE->db->get($this->_table)->result_array();
+		return ee()->db->get($this->_table)->result_array();
 	}
 
 	// --------------------------------------------------------------------
@@ -193,7 +194,7 @@ class Seed_model extends CI_Model {
 	 */
 	public function get_all_pk()
 	{
-		return $this->EE->db->select( $this->_pk )->get($this->_table)->result_array();
+		return ee()->db->select( $this->_pk )->get($this->_table)->result_array();
 	}
 	// --------------------------------------------------------------------
 
@@ -226,7 +227,7 @@ class Seed_model extends CI_Model {
 			// loop through attributes to get posted data
 			foreach ($this->attributes() AS $attr)
 			{
-				if (($val = $this->EE->input->post($attr)) !== FALSE)
+				if (($val = ee()->input->post($attr)) !== FALSE)
 				{
 					$data[$attr] = $val;
 				}
@@ -244,8 +245,8 @@ class Seed_model extends CI_Model {
 		}
 
 		// Insert data and return inserted id
-		$this->EE->db->insert($this->_table, $data);
-		return $this->EE->db->insert_id();
+		ee()->db->insert($this->_table, $data);
+		return ee()->db->insert_id();
 	}
 
 	// --------------------------------------------------------------------
@@ -265,7 +266,7 @@ class Seed_model extends CI_Model {
 			// loop through attributes to get posted data
 			foreach ($this->attributes() AS $attr)
 			{
-				if (($val = $this->EE->input->post($attr)) !== FALSE)
+				if (($val = ee()->input->post($attr)) !== FALSE)
 				{
 					$data[$attr] = $val;
 				}
@@ -283,7 +284,7 @@ class Seed_model extends CI_Model {
 		}
 
 		// Insert data and return inserted id
-		$this->EE->db->update($this->_table, $data, "{$this->_pk} = '{$id}'");
+		ee()->db->update($this->_table, $data, "{$this->_pk} = '{$id}'");
 	}
 
 	// --------------------------------------------------------------------
@@ -302,7 +303,7 @@ class Seed_model extends CI_Model {
 			// loop through attributes to get posted data
 			foreach ($this->attributes() AS $attr)
 			{
-				if (($val = $this->EE->input->post($attr)) !== FALSE)
+				if (($val = ee()->input->post($attr)) !== FALSE)
 				{
 					$data[$attr] = $val;
 				}
@@ -318,7 +319,7 @@ class Seed_model extends CI_Model {
 			}
 		}
 
-		$sql = $this->EE->db->insert_string($this->_table, $data);
+		$sql = ee()->db->insert_string($this->_table, $data);
 
 
 		$sql .= " ON DUPLICATE KEY UPDATE ";
@@ -327,13 +328,13 @@ class Seed_model extends CI_Model {
 
 		foreach( $data as $key => $row ) 
 		{
-			$temp[] = " `" . $key . "` = '" . $this->EE->db->escape_str( $row ) . "'";
+			$temp[] = " `" . $key . "` = '" . ee()->db->escape_str( $row ) . "'";
 		}
 
 		$sql .= implode( ", ", $temp );
 
 		// Insert data and return inserted id
-		$this->EE->db->query( $sql );
+		ee()->db->query( $sql );
 	}
 
 	// --------------------------------------------------------------------
@@ -355,7 +356,7 @@ class Seed_model extends CI_Model {
 
 		if ($attr === FALSE) $attr = $this->_pk;
 
-		$this->EE->db->where_in($attr, $id)->delete($this->_table);
+		ee()->db->where_in($attr, $id)->delete($this->_table);
 	}
 
 	// --------------------------------------------------------------------
@@ -394,7 +395,7 @@ class Seed_model extends CI_Model {
 		$sql .= "PRIMARY KEY (".implode(',', (array) $this->_pk)."))";
 
 		// Execute query
-		$this->EE->db->query($sql);
+		ee()->db->query($sql);
 	}
 
 	// --------------------------------------------------------------------
@@ -407,17 +408,17 @@ class Seed_model extends CI_Model {
 	 */
 	public function uninstall()
 	{
-		$this->EE->db->query("DROP TABLE IF EXISTS {$this->_table}");
+		ee()->db->query("DROP TABLE IF EXISTS {$this->_table}");
 	}
 
 	// --------------------------------------------------------------------
 
 	public function get_plugins( $plugin_list )
 	{
-		$this->EE->load->helper(array('file'));
+		ee()->load->helper(array('file'));
 		
 		$plugins = array();
-		$this->EE->seed_plugins = new stdClass();
+		ee()->seed_plugins = new stdClass();
 
 		require_once SEED_FIELD_PLUGIN_PATH . 'seed.fieldtype.php';
 	
@@ -448,7 +449,7 @@ class Seed_model extends CI_Model {
 				
 				$plugin = $this->create_child( $class );
 
-				$this->EE->seed_plugins->$class = $plugin;
+				ee()->seed_plugins->$class = $plugin;
 
 				$plugins[ $class ] = get_object_vars($plugin);
 			}
@@ -483,10 +484,10 @@ class Seed_model extends CI_Model {
 
 	public function get_options( $options_list )
 	{
-		$this->EE->load->helper(array('file'));
+		ee()->load->helper(array('file'));
 
 		$options = array();
-		$this->EE->seed_options = new stdClass();
+		ee()->seed_options = new stdClass();
 		
 		require_once SEED_OPTION_PLUGIN_PATH . 'seed.option.php';
 	
@@ -517,7 +518,7 @@ class Seed_model extends CI_Model {
 				
 				$option = $this->create_option( $class );
 
-				$this->EE->seed_options->$class = $option;
+				ee()->seed_options->$class = $option;
 
 				$options[ $class ] = get_object_vars($option);
 			}

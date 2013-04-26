@@ -33,7 +33,7 @@ class Seed_option_structure extends Seed_option
 		if( empty( $option ) ) return;
 
 		// Get the url title first
-		$entry = $this->EE->db->select('url_title, channel_id')
+		$entry = ee()->db->select('url_title, channel_id')
 								->from('channel_titles')
 								->where('entry_id', $entry_id)
 								->get()
@@ -99,13 +99,13 @@ class Seed_option_structure extends Seed_option
 
 		// We need to update the config->item('site_pages')
 		// now other wise it won't register for the next loop
-		$res = $this->EE->db->select('site_pages')
+		$res = ee()->db->select('site_pages')
 								->from('sites')
 								->where('site_id', '1')
 								->get()
 								->row_array();
 
-		$this->EE->config->set_item('site_pages', unserialize( base64_decode( $res['site_pages'] ) ) );
+		ee()->config->set_item('site_pages', unserialize( base64_decode( $res['site_pages'] ) ) );
 
 	}
 

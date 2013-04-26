@@ -48,16 +48,16 @@ class Seed_fieldtype_playa extends Seed_fieldtype
 		if( !$is_cell ) 
 		{
 			if( $field_id == 0 ) return $return;
-			if( !isset( $this->EE->api_channel_fields->settings[ $field_id ] ) ) return $return;
+			if( !isset( ee()->api_channel_fields->settings[ $field_id ] ) ) return $return;
 
 
-			$settings = $this->EE->api_channel_fields->settings[ $field_id ]['field_settings'];
+			$settings = ee()->api_channel_fields->settings[ $field_id ]['field_settings'];
 		}
 		else
 		{
 			if( $cell_id == 0 ) return $return;
 
-			$cell = $this->EE->db->select('col_settings')
+			$cell = ee()->db->select('col_settings')
 								->where('col_id', $cell_id )
 								->get('matrix_cols')
 								->row_array();
@@ -104,7 +104,7 @@ class Seed_fieldtype_playa extends Seed_fieldtype
 		{
 			foreach( $settings['authors'] AS $author ) 
 			{
-				if( $author == 'current' ) $this->authors[] = $this->EE->session->userdata['member_id'];
+				if( $author == 'current' ) $this->authors[] = ee()->session->userdata['member_id'];
 				else $this->authors[] = $author;
 			}
 		}
@@ -165,34 +165,34 @@ class Seed_fieldtype_playa extends Seed_fieldtype
 	{
 		// Pick an entry id at random with the channel, author and status as limited
 
-		$this->EE->db->select( array('entry_id','title') );
+		ee()->db->select( array('entry_id','title') );
 
 		if( !empty( $this->channels ) )
 		{
 			// Limit by channels
-			$this->EE->db->where_in('channel_id', $this->channels );
+			ee()->db->where_in('channel_id', $this->channels );
 		}
 
 		if( !empty( $this->authors ) )
 		{
 			// Limit by authors
-			$this->EE->db->where_in('author_id', $this->authors );
+			ee()->db->where_in('author_id', $this->authors );
 		}
 
 		if( !empty( $this->statuses ) )
 		{
 			// Limit by statuses
-			$this->EE->db->where_in('status', $this->statuses );
+			ee()->db->where_in('status', $this->statuses );
 		}
 
 		// Do we have a list of id's to avoid?
 		if( !empty( $this->ids_used ) ) 
 		{
-			$this->EE->db->where_not_in('entry_id', $this->ids_used );
+			ee()->db->where_not_in('entry_id', $this->ids_used );
 		}
 
 
-		$row = $this->EE->db->order_by('entry_id', 'random')
+		$row = ee()->db->order_by('entry_id', 'random')
 						->get('channel_titles','1')
 						->row_array();
 

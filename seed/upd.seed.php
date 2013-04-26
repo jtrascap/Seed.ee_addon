@@ -39,15 +39,15 @@ class Seed_upd {
 	 */
 	public function __construct()
 	{
-
-		// Set global object
-		$this->EE =& get_instance();
+		if ( ! function_exists('ee') ) {
+			function ee() {	return get_instance(); }
+		}
 
 		// Define the package path
-		$this->EE->load->add_package_path(PATH_THIRD.'Seed');
+		ee()->load->add_package_path(PATH_THIRD.'Seed');
 
 		// Load libraries...
-		$this->EE->load->library('Seed_model');
+		ee()->load->library('Seed_model');
 
 		// Load other models
 		Seed_model::load_models();
@@ -67,7 +67,7 @@ class Seed_upd {
 		// Add row to modules table
 		// --------------------------------------
 
-		$this->EE->db->insert('modules', array(
+		ee()->db->insert('modules', array(
 			'module_name'    => SEED_CLASS_NAME,
 			'module_version' => SEED_VERSION,
 			'has_cp_backend' => 'y'
@@ -89,7 +89,7 @@ class Seed_upd {
 		// get module id
 		// --------------------------------------
 
-		$query = $this->EE->db->select('module_id')
+		$query = ee()->db->select('module_id')
 		       ->from('modules')
 		       ->where('module_name', SEED_CLASS_NAME)
 		       ->get();
@@ -99,8 +99,8 @@ class Seed_upd {
 		// remove references from modules
 		// --------------------------------------
 
-		$this->EE->db->where('module_name', SEED_CLASS_NAME);
-		$this->EE->db->delete('modules');
+		ee()->db->where('module_name', SEED_CLASS_NAME);
+		ee()->db->delete('modules');
 
 		return TRUE;
 	}
@@ -122,7 +122,7 @@ class Seed_upd {
 		{
 			// Remove the old bad record that was inserted in 0.9.1
 			// in the exp_modules table
-			$this->EE->db->where('module_name', 'SEED_CLASS_NAME')
+			ee()->db->where('module_name', 'SEED_CLASS_NAME')
 							->delete('modules');
 		}
 

@@ -135,7 +135,7 @@ class Seed_fieldtype_text extends Seed_fieldtype
 
 		$length = rand( $field['from'], $field['to'] );
 	
-		$ret = $this->EE->seed_generator_model->generate_words( $field['max'], $length );
+		$ret = ee()->seed_generator_model->generate_words( $field['max'], $length );
 
 		// Now do some case management 	
 		switch( $field['case'] ) {

@@ -227,7 +227,7 @@ class Seed_fieldtype_wygwam extends Seed_fieldtype
 
 		$length = rand( $this->field['from'], $this->field['to'] );
 	
-		$ret = $this->EE->seed_generator_model->generate_paragraphs( $length );
+		$ret = ee()->seed_generator_model->generate_paragraphs( $length );
 
 		$paragraphs = explode( "\n\n", $ret );
 
@@ -371,7 +371,7 @@ class Seed_fieldtype_wygwam extends Seed_fieldtype
 
 
 			// Generate some content for this
-			$content = ' '.$pre.$this->EE->seed_generator_model->generate_words( 150, rand( $len_min, $len_max) ). $post . ' ';
+			$content = ' '.$pre.ee()->seed_generator_model->generate_words( 150, rand( $len_min, $len_max) ). $post . ' ';
 
 			// Now make a marker for this location
 			// and generate what we'll be inserting here
@@ -422,7 +422,7 @@ class Seed_fieldtype_wygwam extends Seed_fieldtype
 
 				for( $k = 1; $k <= $list_length; $k++ )
 				{
-					$content .= $sub_pre . $this->EE->seed_generator_model->generate_words( 150, rand( $len_min, $len_max) ) . $sub_post . "\n";
+					$content .= $sub_pre . ee()->seed_generator_model->generate_words( 150, rand( $len_min, $len_max) ) . $sub_post . "\n";
 				}
 
 				$content .= $post;
@@ -430,7 +430,7 @@ class Seed_fieldtype_wygwam extends Seed_fieldtype
 			else
 			{
 				// Generate some content for this
-				$content = $pre.$this->EE->seed_generator_model->generate_words( 250, rand( $len_min, $len_max) ). $post . ' ';
+				$content = $pre.ee()->seed_generator_model->generate_words( 250, rand( $len_min, $len_max) ). $post . ' ';
 			}
 
 			$this->paragraphs = array_merge( $head, array($content), $tail );
