@@ -282,8 +282,8 @@ class Seed_mcp
 
 		ee()->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.$theme_folder_url.'styles/screen.css" />');
 
-		ee()->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'scripts/compressed.js"></script>');
-		ee()->cp->add_to_head('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'seed.js"></script>');
+		ee()->cp->add_to_foot('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'scripts/compressed.js"></script>');
+		ee()->cp->add_to_foot('<script type="text/javascript" charset="utf-8" src="'.$theme_folder_url.'seed.js"></script>');
 
 
 		// Add datepicker
@@ -293,7 +293,7 @@ class Seed_mcp
 		$date_fmt = $date_fmt ? $date_fmt : ee()->config->item('time_format');
 
 		ee()->cp->add_to_head('<style type="text/css">.hasDatepicker{background:#fff url('.ee()->config->item('theme_folder_url').'cp_themes/default/images/calendar_bg.gif) no-repeat 98% 2px;background-repeat:no-repeat;background-position:99%;}</style>');
-		ee()->cp->add_to_head( trim('
+		ee()->cp->add_to_foot( trim('
 			<script type="text/javascript">
 				$.createDatepickerTime=function(){
 					date = new Date();
